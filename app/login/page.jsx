@@ -44,8 +44,16 @@ const Login2 = ({
       if (!res.ok) throw new Error(data.error || 'Login gagal');
       // Simpan token/user ke localStorage jika perlu
       if (data.token) localStorage.setItem('token', data.token);
-      // Redirect ke dashboard atau halaman utama
-      router.push('/');
+      if (data.user && data.user.role) localStorage.setItem('role', data.user.role);
+      console.log(data)
+      // Redirect ke halaman utama sesuai role
+      if (data.user && data.user.role === 'STUDENT') {
+        router.push('/siswa');
+      } else if (data.user && data.user.role === 'TEACHER') {
+        router.push('/guru');
+      } else {
+        router.push('/');
+      }
     } catch (err) {
       setError(err.message);
     } finally {

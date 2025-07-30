@@ -2,6 +2,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ConditionalNavbar from "@/components/ConditionalNavbar";
 import ConditionalFooter from "@/components/ConditionalFooter";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,11 +24,18 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
-        
-          <ConditionalNavbar />
-          {children}
-          <ConditionalFooter />
-        
+
+        <ConditionalNavbar />
+        <div className="flex">
+          <SidebarProvider>
+          <AppSidebar />
+          <main className="flex-1 ml-64">
+            {children}
+          </main>
+          </SidebarProvider>
+        </div>
+        <ConditionalFooter />
+
       </body>
     </html>
   );
