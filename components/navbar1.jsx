@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
 
 const Navbar1 = ({
@@ -26,6 +26,8 @@ const Navbar1 = ({
     alt: "logo",
     title: "AdapTech",
   },
+  onToggleSidebar = () => { }, // Tambahkan prop handler
+
 
   auth = {
     login: { title: "Login", url: "/login" },
@@ -43,6 +45,18 @@ const Navbar1 = ({
         {/* Desktop Menu */}
         <nav className="hidden w-full justify-between md:flex">
           <div className="flex items-center gap-2">
+            {/* Tombol Collapse Sidebar hanya jika login */}
+            {isLoggedIn && (
+              <SidebarTrigger
+                
+                className="mr-2 md:flex hidden"
+                aria-label="Toggle Sidebar"
+              >
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SidebarTrigger>
+            )}
             {/* Logo */}
             <a href={logo.url} className="flex items-center gap-2">
               <img src={logo.src} className="h-8 w-auto" alt={logo.alt} />
@@ -50,7 +64,6 @@ const Navbar1 = ({
                 {logo.title}
               </span>
             </a>
-
           </div>
           <div className="flex gap-2">
             {isLoggedIn ? (
