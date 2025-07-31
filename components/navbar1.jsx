@@ -1,3 +1,4 @@
+"use client";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -35,7 +36,7 @@ const Navbar1 = ({
   useEffect(() => {
     setIsLoggedIn(!!localStorage.getItem('token'));
   }, []);
-  
+
   return (
     <section className="py-4 bg-white shadow-sm ">
       <div className="container px-4 mx-auto max-w-7xl">
@@ -68,6 +69,7 @@ const Navbar1 = ({
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => {
                     localStorage.removeItem('token');
+                    localStorage.removeItem('role');
                     window.location.href = '/login';
                   }}>
                     Logout
@@ -110,6 +112,7 @@ const Navbar1 = ({
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => {
                     localStorage.removeItem('token');
+                    localStorage.removeItem('role');
                     window.location.href = '/login';
                   }}>
                     Logout

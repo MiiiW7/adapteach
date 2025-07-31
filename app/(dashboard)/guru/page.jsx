@@ -1,6 +1,7 @@
 "use client";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function Guru() {
   const [allowed, setAllowed] = useState(null);
@@ -22,10 +23,9 @@ export default function Guru() {
   if (allowed === null) return null;
 
   return (
-    <>
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
-        <h1 className="text-4xl font-bold">Selamat datang kembali</h1>
-      </main>
-    </>
+    <div className="flex min-h-screen flex-col items-center justify-between p-24">
+      <h1 className="text-4xl font-bold">Selamat datang kembali</h1>
+      <Link href="/guru/tambah-kelas"><Button>Tambah Kelas</Button></Link>
+    </div>
   );
 }
