@@ -20,19 +20,23 @@ enum Role {
 }
 
 model User {
-  id          Int           @id @default(autoincrement())
-  name        String
-  email       String        @unique
-  password    String
-  role        Role          @default(STUDENT)
-  enrollments Enrollment[]
-  createdAt   DateTime      @default(now())
+  id               Int       @id @default(autoincrement())
+  name             String
+  email            String    @unique
+  password         String
+  role             Role      @default(STUDENT)
+  enrollments      Enrollment[]
+  teachingCourses  Course[]  @relation("TeacherCourses")
+  createdAt        DateTime  @default(now())
 }
 
 model Course {
   id          Int           @id @default(autoincrement())
   title       String
   description String
+  code        String        @unique
+  teacher     User          @relation("TeacherCourses", fields: [teacherId], references: [id])
+  teacherId   Int
   materials   Material[]
   enrollments Enrollment[]
   createdAt   DateTime      @default(now())

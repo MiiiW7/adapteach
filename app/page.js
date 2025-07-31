@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
-import {Navbar1} from "@/components/navbar1";
+import { GuestNavbar } from "@/components/guest-navbar";
 import { Footer7 } from "@/components/footer7";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <>
       <main>
-        <Navbar1 />
+        <GuestNavbar />
         <div className="flex min-h-screen flex-col items-center justify-between p-24">
         <h1 className="text-7xl font-bold">Welcome to AdapTeach</h1>
         <p className="mt-4 text-lg">Your personalized learning platform</p>
