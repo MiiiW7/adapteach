@@ -48,7 +48,7 @@ const Navbar1 = ({
             {/* Tombol Collapse Sidebar hanya jika login */}
             {isLoggedIn && (
               <SidebarTrigger
-                
+
                 className="mr-2 md:flex hidden"
                 aria-label="Toggle Sidebar"
               >
@@ -104,11 +104,23 @@ const Navbar1 = ({
 
         {/* Mobile Menu */}
         <div className="block md:hidden">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            {/* SidebarTrigger (Hamburger) */}
+            {isLoggedIn && (
+              <SidebarTrigger
+                className="mr-2 flex md:hidden"
+                aria-label="Toggle Sidebar"
+              >
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SidebarTrigger>
+            )}
             {/* Logo */}
             <a href={logo.url} className="flex items-center gap-2">
               <img src={logo.src} className="h-8 w-auto" alt={logo.alt} />
             </a>
+            <div className="flex-1" />
             {isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

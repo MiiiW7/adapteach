@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { GuestNavbar } from "@/components/guest-navbar";
+import GuestNavbar from "@/components/guest-navbar";
 import { Footer7 } from "@/components/footer7";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
