@@ -19,7 +19,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
 
-const Navbar1 = ({
+const   Navbar1 = ({
   logo = {
     url: "/",
     src: "/globe.svg",
@@ -69,12 +69,7 @@ const Navbar1 = ({
             {isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <span>
-                    <Avatar>
-                      <AvatarImage src="/next.svg" alt="User" />
-                      <AvatarFallback></AvatarFallback>
-                    </Avatar>
-                  </span>
+                  <Menu className="h-6 w-6 cursor-pointer" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="">
                   <DropdownMenuItem asChild>
@@ -124,12 +119,7 @@ const Navbar1 = ({
             {isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <span>
-                    <Avatar>
-                      <AvatarImage src="/next.svg" alt="User" />
-                      <AvatarFallback></AvatarFallback>
-                    </Avatar>
-                  </span>
+                  <Menu className="h-6 w-6 cursor-pointer" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="">
                   <DropdownMenuItem asChild>

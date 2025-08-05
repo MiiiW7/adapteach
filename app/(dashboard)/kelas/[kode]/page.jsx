@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -11,6 +11,7 @@ export default function DetailKelas() {
   const [kelas, setKelas] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [teacher, setTeacher] = useState(false);
 
   useEffect(() => {
     const fetchKelas = async () => {
@@ -33,6 +34,15 @@ export default function DetailKelas() {
     if (kode) fetchKelas();
   }, [kode]);
 
+  useEffect(() => {
+    const role = localStorage.getItem('role');
+    if (role === 'TEACHER') {
+      setTeacher(true);
+    } else {
+      setTeacher(false);
+    }
+  }, []);
+
   if (loading) return (
     <div className="max-w-xl mx-auto bg-white rounded-xl shadow p-8 mt-10 animate-pulse">
       <Skeleton className="h-8 w-2/3 mb-4" />
@@ -47,21 +57,27 @@ export default function DetailKelas() {
 
   return (
     <>
-    <div className="max-w-xl mx-auto bg-white rounded-xl shadow p-8 mt-10">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-3xl font-bold">{kelas.title}</h1>
-        <span className="text-xs bg-gray-100 px-2 py-1 rounded font-mono">Kode: {kelas.code}</span>
+      <div className="max-w-xl mx-auto bg-white rounded-xl shadow p-8 mt-10">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl font-bold">{kelas.title}</h1>
+          <span className="text-xs bg-gray-100 px-2 py-1 rounded font-mono">Kode: {kelas.code}</span>
+        </div>
+        <div className="mb-6 text-gray-700 text-lg">{kelas.description}</div>
+        <div className="text-sm text-gray-500">Dibuat: {new Date(kelas.createdAt).toLocaleDateString()}</div>
       </div>
-      <div className="mb-6 text-gray-700 text-lg">{kelas.description}</div>
-      <div className="text-sm text-gray-500">Dibuat: {new Date(kelas.createdAt).toLocaleDateString()}</div>
-    </div>
-    <div className="max-w-xl mx-auto bg-white rounded-xl shadow p-8 mt-10">
-      <div className="flex items-center justify-center mb-4">
-      <Link href={`/kelas/${kelas.code}/bahan-ajar`}>
-        <Button>Tambah Bahan Ajar</Button>
-      </Link>
+      <div className="max-w-xl mx-auto bg-white rounded-xl shadow p-8 mt-10">
+        {teacher ? (
+          <div className="flex items-center justify-center mb-4">
+          <Link href={`/kelas/${kelas.code}/tambah-materi`}>
+            <Button>Tambah Bahan Ajar</Button>
+          </Link>
+        </div>
+        ) : (
+          <div className="flex items-center justify-center mb-4">
+            <Button disabled>Hanya guru yang dapat menambah bahan ajar</Button>
+          </div>
+        )}
       </div>
-    </div>
     </>
   );
 }
