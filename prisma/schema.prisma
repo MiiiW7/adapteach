@@ -42,13 +42,20 @@ model Course {
   createdAt   DateTime      @default(now())
 }
 
+enum LearningStyle {
+  VISUAL
+  AUDITORY
+  KINESTHETIC
+}
+
 model Material {
-  id         Int       @id @default(autoincrement())
-  title      String
-  content    String
-  course     Course    @relation(fields: [courseId], references: [id])
-  courseId   Int
-  createdAt  DateTime  @default(now())
+  id             Int            @id @default(autoincrement())
+  title          String
+  content        String
+  learningStyle  LearningStyle  @default(VISUAL)
+  course         Course         @relation(fields: [courseId], references: [id])
+  courseId       Int
+  createdAt      DateTime       @default(now())
 }
 
 model Enrollment {
