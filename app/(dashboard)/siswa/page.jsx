@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IkutKelasDialog } from "./IkutKelasDialog";
+import PilihGayaBelajar from "./PilihGayaBelajar";
 
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
@@ -15,6 +16,7 @@ export default function Siswa() {
   const [allowed, setAllowed] = useState(null);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
   const [error, setError] = useState("");
 
   const fetchCourses = async () => {
@@ -37,10 +39,23 @@ export default function Siswa() {
   };
 
   useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      const res = await fetch('/api/user/me', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data);
+      }
+    };
+
     const role = localStorage.getItem('role');
     if (role === 'STUDENT') {
       setAllowed(true);
       fetchCourses();
+      fetchUser();
     } else {
       setAllowed(false);
     }
@@ -59,6 +74,20 @@ export default function Siswa() {
     <>
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <h1 className="text-4xl font-bold mb-8">Selamat Datang Kembali</h1>
+        {user && !user.learningStyle && (
+          <div className="mb-4">
+            <Link href="/siswa/pilih-gaya-belajar">
+              <Button variant="outline">Pilih Gaya Belajar</Button>
+            </Link>
+          </div>
+        )}
+        {user && user.learningStyle && (
+          <div className="mb-4">
+            <Link href="/siswa/pilih-gaya-belajar">
+              <Button variant="outline">Ubah Gaya Belajar</Button>
+            </Link>
+          </div>
+        )}
         <IkutKelasDialog onSukses={fetchCourses} />
         <div className="mt-10 w-full max-w-5xl">
           <h2 className="text-2xl font-semibold mb-4">Kelas yang Diikuti</h2>
