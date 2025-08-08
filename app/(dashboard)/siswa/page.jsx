@@ -100,7 +100,7 @@ export default function Siswa() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {courses.map(course => (
-                <Link key={course.id} href={`/dashboard/siswa/kelas/${course.id}`} className="hover:no-underline">
+                <Link key={course.id} href={`/siswa/kelas/${course.code}`} className="hover:no-underline">
                   <Card className="h-full flex flex-col justify-between cursor-pointer transition-shadow hover:shadow-lg">
                     <div>
                       <div className="flex items-start justify-between px-6 pt-4">

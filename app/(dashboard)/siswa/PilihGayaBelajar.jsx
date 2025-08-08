@@ -46,6 +46,10 @@ export default function PilihGayaBelajar({ defaultValue, onSukses }) {
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto p-8 bg-white rounded shadow space-y-6 mt-16">
       <h2 className="text-2xl font-bold mb-4 text-center">Pilih Gaya Belajar Anda</h2>
+      <div className="text-center">
+        <p className="text-sm text-gray-600">Test gaya belajar ini untuk memilih gaya belajar yang paling sesuai dengan Anda.</p>
+        <p className="text-sm text-gray-600 cursor-pointer hover:underline"><a href="https://www.youtube.com/watch?v=9bZkp7q19f0" target="_blank">Tes Gaya belajar di sini.</a></p>
+      </div>
       <div className="flex flex-col gap-4">
         {OPTIONS.map(opt => (
           <label key={opt.value} className={`flex items-center gap-3 p-3 border rounded cursor-pointer ${selected === opt.value ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}>
