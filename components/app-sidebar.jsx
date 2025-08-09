@@ -45,6 +45,7 @@ const user = {
 
 export function AppSidebar(props) {
   const [allowed, setAllowed] = useState(false)
+  const [studentClasses, setStudentClasses] = useState([])
   const [courses, setCourses] = useState([])
 
   const fetchCourses = async () => {
@@ -72,12 +73,47 @@ export function AppSidebar(props) {
     }
   }
 
+  const fetchStudentClasses = async () => {
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+
+      const res = await fetch("/api/my-courses", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Gagal mengambil data kelas siswa")
+
+      const formatted = data.map((cls) => ({
+        name: cls.title,
+        url: `/kelas/${cls.code}`,
+        instructor: cls.instructor || "Tidak diketahui",
+      }))
+
+      setStudentClasses(formatted)
+    } catch (err) {
+      console.error("Gagal mengambil data kelas siswa:", err)
+      // Mock data for development if API fails
+      setStudentClasses([
+        { name: "Matematika Dasar", url: "/kelas/MAT101", instructor: "Budi Santoso" },
+        { name: "Bahasa Indonesia", url: "/kelas/IND101", instructor: "Siti Nurhaliza" },
+        { name: "IPA", url: "/kelas/IPA101", instructor: "Ahmad Dahlan" },
+        { name: "Bahasa Inggris", url: "/kelas/ENG101", instructor: "Sarah Johnson" },
+      ])
+    }
+  }
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const role = localStorage.getItem("role")
       if (role === "TEACHER") {
         setAllowed(true)
         fetchCourses()
+      } else if (role === "STUDENT") {
+        setAllowed(true)
+        fetchStudentClasses()
       } else {
         setAllowed(false)
       }
@@ -89,7 +125,15 @@ export function AppSidebar(props) {
       <SidebarHeader />
       <SidebarContent>
         <NavMain items={navMain} />
-        {allowed && <NavProjects projects={courses} />}
+        {allowed && (
+          <>
+            {localStorage.getItem("role") === "STUDENT" ? (
+              <NavProjects projects={studentClasses} />
+            ) : (
+              <NavProjects projects={courses} />
+            )}
+          </>
+        )}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />

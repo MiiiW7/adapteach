@@ -15,7 +15,7 @@ function SidebarContent({ children }) {
       {/* Container utama dengan flex layout */}
       <div className="flex flex-1">
         {/* Sidebar dengan sticky positioning */}
-        <div className="sticky top-16 left-0 h-[calc(100vh-4rem)] z-10 bg-background">
+        <div className="sticky top-16 left-0 h-[calc(100vh-4rem)] z-10 bg-background ml-2">
           <AppSidebar />
         </div>
         

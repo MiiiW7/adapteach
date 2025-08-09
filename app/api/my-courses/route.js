@@ -23,19 +23,31 @@ export async function GET(request) {
       return Response.json({ error: 'Unauthorized: not a student' }, { status: 401 });
     }
     const userId = user.userId;
-    // Ambil semua kelas yang diikuti siswa
+    // Ambil semua kelas yang diikuti siswa dengan informasi teacher
     const enrollments = await prisma.enrollment.findMany({
       where: { userId },
-      include: { course: true },
+      include: { 
+        course: {
+          include: {
+            teacher: {
+              select: {
+                name: true,
+                email: true
+              }
+            }
+          }
+        }
+      },
       orderBy: { createdAt: 'desc' },
     });
-    // Map ke info course
+    // Map ke info course dengan teacher
     const courses = enrollments.map(e => ({
       id: e.course.id,
       title: e.course.title,
       description: e.course.description,
       code: e.course.code,
       createdAt: e.course.createdAt,
+      instructor: e.course.teacher?.name || 'Tidak diketahui',
     }));
     return Response.json(courses);
   } catch (error) {

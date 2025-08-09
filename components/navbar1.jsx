@@ -59,7 +59,7 @@ const Navbar1 = ({
             )}
             {/* Logo */}
             <a href={logo.url} className="flex items-center gap-2">
-              <img src={logo.src} className="h-8 w-auto" alt={logo.alt} />
+              {/* <img src={logo.src} className="h-8 w-auto" alt={logo.alt} /> */}
               <span className="text-lg font-semibold tracking-tighter">
                 {logo.title}
               </span>
@@ -113,7 +113,10 @@ const Navbar1 = ({
             )}
             {/* Logo */}
             <a href={logo.url} className="flex items-center gap-2">
-              <img src={logo.src} className="h-8 w-auto" alt={logo.alt} />
+              {/* <img src={logo.src} className="h-8 w-auto" alt={logo.alt} /> */}
+              <span className="text-lg font-semibold tracking-tighter">
+                {logo.title}
+              </span>
             </a>
             <div className="flex-1" />
             {isLoggedIn ? (
