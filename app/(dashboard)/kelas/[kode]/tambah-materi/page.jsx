@@ -75,7 +75,8 @@ export default function TambahMateri() {
           title: `Materi ${style.charAt(0).toUpperCase() + style.slice(1)} - ${topik}`,
           content: result[style],
           courseCode: kode,
-          learningStyle: style
+          learningStyle: style,
+          explanation: result.penjelasam || null
         }),
       });
       if (!res.ok) throw new Error("Gagal menambah materi");
@@ -147,6 +148,17 @@ export default function TambahMateri() {
             <p className="text-gray-600">Pilih materi yang ingin Anda tambahkan ke kelas</p>
           </div>
           
+          {/* Explanation Section */}
+          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200 mb-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Penjelasan Gaya Belajar</h3>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h4 className="font-semibold text-gray-800 mb-2">Penjelasan Materi</h4>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                {result.penjelasam || "Penjelasan umum tentang materi yang akan dipelajari."}
+              </p>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Visual Card */}
             <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow-md border border-purple-200 overflow-hidden">

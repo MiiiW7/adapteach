@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, PlayCircle, ImageIcon, FileText, Clock, User, Tag } from "lucide-react";
+import { BookOpen, PlayCircle, ImageIcon, FileText, Clock, User, Tag, Activity } from "lucide-react";
 
 // Helper: konversi url youtube ke embed
 function convertYoutubeUrlToEmbed(url) {
@@ -99,6 +99,8 @@ export default function SiswaKelasPage() {
         return <ImageIcon className="w-4 h-4" />;
       case 'reading':
         return <BookOpen className="w-4 h-4" />;
+      case 'kinesthetic':
+        return <Activity className="w-4 h-4" />;
       default:
         return <FileText className="w-4 h-4" />;
     }
@@ -112,6 +114,8 @@ export default function SiswaKelasPage() {
         return "bg-blue-100 text-blue-800 hover:bg-blue-200";
       case 'reading':
         return "bg-green-100 text-green-800 hover:bg-green-200";
+      case 'kinesthetic':
+        return "bg-orange-100 text-orange-800 hover:bg-orange-200";
       default:
         return "bg-gray-100 text-gray-800 hover:bg-gray-200";
     }
@@ -205,6 +209,14 @@ export default function SiswaKelasPage() {
                           <PlayCircle className="w-4 h-4" />
                           Buka di YouTube
                         </a>
+                        {/* {m.explanation && (
+                          <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                            <h4 className="text-sm font-semibold text-purple-800 mb-2">Penjelasan</h4>
+                            <p className="text-sm text-gray-700 leading-relaxed">
+                              {m.explanation}
+                            </p>
+                          </div>
+                        )} */}
                       </div>
                     ) : user.learningStyle?.toLowerCase() === "visual" && m.content.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) ? (
                       <div className="space-y-3">
@@ -221,15 +233,33 @@ export default function SiswaKelasPage() {
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors"
                         >
-                          <ImageIcon className="w-4 h-4" />
-                          Lihat gambar asli
+                          <PlayCircle className="w-4 h-4" />
+                          Lihat Media
                         </a>
                       </div>
-                    ) : (
-                      <div className="prose prose-sm max-w-none">
-                        <div className="text-gray-700 leading-relaxed line-clamp-4">
-                          {m.content}
+                    ) : user.learningStyle?.toLowerCase() === "kinesthetic" ? (
+                      <div className="space-y-4">
+                        <div className="bg-orange-50 border-l-4 border-orange-400 p-4 rounded-r">
+                          <div className="flex">
+                            <div className="flex-shrink-0">
+                              <Activity className="h-5 w-5 text-orange-600" />
+                            </div>
+                            <div className="ml-3">
+                              <h3 className="text-sm font-medium text-orange-800">Panduan Praktik</h3>
+                              <div className="mt-2 text-sm text-orange-700">
+                                <p className="whitespace-pre-line">{m.content}</p>
+                              </div>
+                            </div>
+                          </div>
                         </div>
+                      </div>
+                    ) : null}
+                    {m.explanation && (
+                      <div className="mt-4 pt-3 border-t border-gray-100">
+                        <h4 className="text-sm font-semibold text-gray-800 mb-2">Penjelasan</h4>
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                          {m.explanation}
+                        </p>
                       </div>
                     )}
                   </CardContent>

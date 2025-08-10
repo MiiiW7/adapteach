@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export async function POST(request) {
   try {
-    const { title, content, courseCode, learningStyle } = await request.json();
+    const { title, content, courseCode, learningStyle, explanation } = await request.json();
 
     // Find the course by code to get its ID
     const course = await prisma.course.findUnique({
@@ -43,6 +43,7 @@ export async function POST(request) {
         content,
         learningStyle: learningStyleEnum,
         courseId: course.id,
+        explanation: explanation || null,
       },
     });
 
