@@ -1,0 +1,302 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        528,
+        256
+      ],
+      "id": "e060b453-987b-4d1d-8078-f27f14ffda15",
+      "name": "When chat message received",
+      "webhookId": "c1d4191f-f0e9-436e-b8da-e0f273a9f7e8"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topik: {{ $('Webhook').item.json.body.topik }}. Berikan saya materi belajar untuk 3 gaya:\n- visual (link gambar/ilustrasi)\n- auditori (link video/penjelasan audio)\n- kinestetik (langkah praktik)\n- penjelasan (penjelasan mengenai topik)\nHanya kembalikan JSON tanpa blok kode atau pemformatan markdown.",
+        "options": {
+          "systemMessage": "Kamu adalah guru. Jawab hanya dalam format JSON:\n{\n  \"visual\": \"URL atau deskripsi gambar ilustrasi\",\n  \"auditori\": \"URL video atau penjelasan singkat\",\n  \"kinestetik\": \"Langkah-langkah praktik\"\n  \"penjelasan\": \"Penjelasan mengenai topik\"\n}\nCek di memory jika topik pernah dicari sebelumnya"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        928,
+        -16
+      ],
+      "id": "3d9f3ce8-12a1-47ca-891b-3b2b6ad9b25b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        752,
+        288
+      ],
+      "id": "1881cddd-0874-47fe-afa7-6f7dbd97abd1",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "dEQXmCcxTeodLNIC",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=sessionId"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1056,
+        208
+      ],
+      "id": "a0a0d079-31aa-4752-ae4a-47c96a7cf105",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "search",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        384,
+        -16
+      ],
+      "id": "1569091e-28bb-466b-9c2c-841a40e96ecb",
+      "name": "Webhook",
+      "webhookId": "b4d9b4de-d2c8-4599-bf83-4af17bd1d77b"
+    },
+    {
+      "parameters": {
+        "jsCode": "const topic = $input.first().json.body.topik;\n\nreturn [\n  {\n    visual: `Cari gambar ilustrasi tentang ${topic} di internet.`,\n    auditori: `Cari video pembelajaran tentang ${topic} di YouTube.`,\n    kinestetik: `Buat langkah-langkah praktik untuk memahami topik: ${topic}`\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        -16
+      ],
+      "id": "d04062bc-bfa8-45c3-bab7-68494de6abb2",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1696,
+        -16
+      ],
+      "id": "b92c2e9c-be90-4d63-b1ab-9e56039fcac8",
+      "name": "Respond to Webhook",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        304,
+        176
+      ],
+      "id": "99fca187-eece-4786-9e96-37d7fb485d09",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Gunakan alat pencarian Google untuk mencari gambar atau video penjelasan {{ $('Webhook').item.json.body.topik }}. Ambil hasil dari internet menggunakan Google Search.",
+        "q": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search_Query__q_', ``, 'string') }}",
+        "additionalFields": {
+          "hl": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-serpapi.serpApiTool",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        208
+      ],
+      "id": "77c69041-09d7-4bd3-834e-fbea8509ecf9",
+      "name": "internet",
+      "credentials": {
+        "serpApi": {
+          "id": "PC7JfIJIelp4hzKt",
+          "name": "SerpApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawOutput = items[0].json.output;\n\n// Hapus pembungkus ```json dan ```\nconst cleaned = rawOutput.replace(/^```json\\n/, '').replace(/\\n```$/, '');\n\n// Parse string JSON menjadi objek\nconst parsed = JSON.parse(cleaned);\n\nreturn [\n  {\n    json: {\n      visual: parsed.visual,\n      auditori: parsed.auditori,\n      kinestetik: parsed.kinestetik,\n      penjelasam: parsed.penjelasan\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1392,
+        -16
+      ],
+      "id": "65d38d9d-7bec-4b4a-a56f-15bd0f634bad",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        880,
+        208
+      ],
+      "id": "f26d30ae-f035-4a6e-b056-522d9177ada0",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "YlcvO2It5W1KqWOa",
+          "name": "OpenAi account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        []
+      ]
+    },
+    "internet": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9f50e4a0-2457-4782-a30f-d4b570a5ae7f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e78b9d0f4fdc91b65e108ef8d72975ab3a2bf299371593cd13931eb976634526"
+  },
+  "id": "gxmDiIhbZ0hKoFbK",
+  "tags": []
+}
