@@ -6,7 +6,7 @@ export default function GuestNavbar() {
     <nav className="py-4 bg-white shadow-sm">
       <div className="container px-4 mx-auto max-w-7xl flex items-center justify-between">
         <a href="/" className="flex items-center gap-2">
-          <img src="/globe.svg" className="h-8 w-auto" alt="logo" />
+          {/* <img src="/globe.svg" className="h-8 w-auto" alt="logo" /> */}
           <span className="text-lg font-semibold tracking-tighter">AdapTech</span>
         </a>
         <div className="flex gap-2">

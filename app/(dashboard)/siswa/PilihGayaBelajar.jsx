@@ -48,7 +48,7 @@ export default function PilihGayaBelajar({ defaultValue, onSukses }) {
       <h2 className="text-2xl font-bold mb-4 text-center">Pilih Gaya Belajar Anda</h2>
       <div className="text-center">
         <p className="text-sm text-gray-600">Test gaya belajar ini untuk memilih gaya belajar yang paling sesuai dengan Anda.</p>
-        <p className="text-sm text-gray-600 cursor-pointer hover:underline"><a href="https://www.youtube.com/watch?v=9bZkp7q19f0" target="_blank">Tes Gaya belajar di sini.</a></p>
+        <Button variant={'outline'} className="text-sm text-gray-600 text-bold cursor-pointer hover:underline mt-2"><a href="https://akupintar.id/mp/tes-gaya-belajar" target="_blank">Tes Gaya belajar di sini.</a></Button>
       </div>
       <div className="flex flex-col gap-4">
         {OPTIONS.map(opt => (
