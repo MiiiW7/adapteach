@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { toast } from "sonner"
 
 export default function TambahMateri() {
   // ...
@@ -32,13 +33,22 @@ export default function TambahMateri() {
   const [topik, setTopik] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [result, setResult] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('tambahMateriResult');
-      return saved ? JSON.parse(saved) : null;
-    }
-    return null;
+  const [result, setResult] = useState(null);
+  const [isClient, setIsClient] = useState(false);
+  const [regenerating, setRegenerating] = useState({
+    visual: false,
+    auditori: false,
+    kinestetik: false
   });
+
+  // Set client-side state after mount
+  useEffect(() => {
+    setIsClient(true);
+    const saved = localStorage.getItem('tambahMateriResult');
+    if (saved) {
+      setResult(JSON.parse(saved));
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,10 +67,72 @@ export default function TambahMateri() {
       setResult(data);
       localStorage.setItem('tambahMateriResult', JSON.stringify(data));
       localStorage.setItem('tambahMateriTopik', topik);
+      toast.success('Berhasil!', {
+        description: 'Materi berhasil diambil',
+        duration: 3000,
+      });
     } catch (err) {
-      setError(err.message || "Terjadi kesalahan");
+      const errorMessage = err.message || "Gagal mengambil materi";
+      setError(errorMessage);
+      toast.error('Gagal', {
+        description: errorMessage,
+        duration: 4000,
+      });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRegenerate = async (style) => {
+    setRegenerating(prev => ({ ...prev, [style]: true }));
+    try {
+      const res = await fetch("http://localhost:5678/webhook-test/regenerate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          topik: topik,
+          regenerate: style
+        }),
+      });
+
+      if (!res.ok) throw new Error("Gagal meregenerasi konten");
+
+      const responseData = await res.json();
+      console.log(responseData)
+
+      // Handle array response (assuming first item is the one we want)
+      const newContent = Array.isArray(responseData) ? responseData[0] : responseData;
+
+      setResult(prev => ({
+        ...prev,
+        [style]: newContent[style] || prev[style],
+        penjelasam: newContent.penjelasan || prev.penjelasam // Handle both spellings
+      }));
+
+      // Update localStorage
+      const updatedResult = {
+        ...result,
+        [style]: newContent[style],
+        penjelasam: newContent.penjelasan || result.penjelasam // Handle both spellings
+      };
+      localStorage.setItem('tambahMateriResult', JSON.stringify(updatedResult));
+
+      // Show success toast
+      toast.success(`Materi ${style} berhasil diregenerasi`, {
+        description: 'Konten baru telah berhasil dibuat',
+        duration: 3000,
+      });
+
+    } catch (err) {
+      const errorMessage = err.message || "Terjadi kesalahan saat meregenerasi";
+      setError(errorMessage);
+      console.error("Regenerate error:", err);
+      toast.error('Gagal meregenerasi', {
+        description: errorMessage,
+        duration: 4000,
+      });
+    } finally {
+      setRegenerating(prev => ({ ...prev, [style]: false }));
     }
   };
 
@@ -68,22 +140,49 @@ export default function TambahMateri() {
     setLoading(true);
     setError("");
     try {
+      // Ensure content is always a string
+      let content = "";
+      if (style === 'visual') {
+        // For visual content, we might have an image URL
+        content = typeof result.visual === 'string' ? result.visual : JSON.stringify(result.visual);
+      } else if (style === 'auditori') {
+        // For auditori content, we might have a video URL
+        content = typeof result.auditori === 'string' ? result.auditori : JSON.stringify(result.auditori);
+      } else if (style === 'kinestetik') {
+        // For kinestetik content, we expect text content
+        content = typeof result.kinestetik === 'string' ? result.kinestetik : JSON.stringify(result.kinestetik);
+      }
+
       const res = await fetch("/api/materials", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: `Materi ${style.charAt(0).toUpperCase() + style.slice(1)} - ${topik}`,
-          content: result[style],
+          title: topik,
+          content: content,
           courseCode: kode,
           learningStyle: style,
           explanation: result.penjelasam || null
         }),
       });
       if (!res.ok) throw new Error("Gagal menambah materi");
-      await res.json();
-      alert(`Materi ${style} berhasil disimpan!`);
+      const response = await res.json();
+
+      // Show success toast
+      toast.success('Berhasil!', {
+        description: `Materi ${style} berhasil ditambahkan ke kelas`,
+        duration: 3000,
+      });
+
+      // Optionally, you can redirect or clear the form here
+      // router.push(`/kelas/${kode}`);
     } catch (err) {
-      setError(err.message || "Terjadi kesalahan");
+      const errorMessage = err.message || "Terjadi kesalahan";
+      setError(errorMessage);
+      console.error("Error details:", err);
+      toast.error('Gagal menyimpan', {
+        description: errorMessage,
+        duration: 4000,
+      });
     } finally {
       setLoading(false);
     }
@@ -96,7 +195,7 @@ export default function TambahMateri() {
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Tambah Materi Baru</h1>
         <p className="text-gray-600">Buat materi pembelajaran dengan gaya visual, auditori, dan kinestetik</p>
       </div>
-      
+
       <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col md:flex-row md:items-end md:gap-4">
@@ -116,8 +215,8 @@ export default function TambahMateri() {
             </div>
             {error && <div className="text-red-500 text-sm md:hidden">{error}</div>}
             <div className="mt-4 md:mt-0">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={loading}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6"
               >
@@ -141,13 +240,13 @@ export default function TambahMateri() {
         </form>
       </div>
 
-      {result && result.visual && result.auditori && result.kinestetik && (
-        <div className="space-y-8">
+      {isClient && result && result.visual && result.auditori && result.kinestetik && (
+        <div className="space-y-8" key="result-content">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-800">Hasil Materi</h2>
             <p className="text-gray-600">Pilih materi yang ingin Anda tambahkan ke kelas</p>
           </div>
-          
+
           {/* Explanation Section */}
           <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200 mb-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Penjelasan Gaya Belajar</h3>
@@ -171,17 +270,49 @@ export default function TambahMateri() {
                 </h3>
               </div>
               <div className="p-4">
-                <div className="bg-gray-100 rounded-lg overflow-hidden mb-4">
+                <div className="bg-gray-100 rounded-lg overflow-hidden mb-4 flex items-center justify-center" style={{ minHeight: '192px' }}>
                   {result.visual && result.visual.startsWith('http') ? (
-                    <img 
-                      src={result.visual} 
-                      alt="Visual Materi" 
-                      className="w-full h-48 object-cover"
-                      onError={(e) => {
-                        e.target.src = '/placeholder-image.jpg';
-                        e.target.alt = 'Gambar tidak tersedia';
-                      }}
-                    />
+                    <div className="w-full h-full flex items-center justify-center relative">
+                      <img
+                        src={result.visual}
+                        alt="Visual Materi"
+                        className="max-w-full max-h-48 w-auto h-auto object-contain p-2"
+                        style={{ maxWidth: '100%', maxHeight: '192px' }}
+                        crossOrigin="anonymous"
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          console.error('Image failed to load:', result.visual);
+                          // Try loading with proxy service
+                          const proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(result.visual.replace(/^https?:\/\//, ''))}`;
+                          console.log('Trying proxy:', proxyUrl);
+                          
+                          // Create new image element to test proxy
+                          const testImg = new Image();
+                          testImg.onload = () => {
+                            e.target.src = proxyUrl;
+                            e.target.style.display = 'block';
+                            e.target.nextElementSibling.style.display = 'none';
+                          };
+                          testImg.onerror = () => {
+                            e.target.style.display = 'none';
+                            e.target.nextElementSibling.style.display = 'flex';
+                          };
+                          testImg.src = proxyUrl;
+                        }}
+                        onLoad={(e) => {
+                          console.log('Image loaded successfully:', result.visual);
+                        }}
+                      />
+                      <div className="w-full h-48 bg-gray-200 flex items-center justify-center" style={{ display: 'none' }}>
+                        <div className="text-center">
+                          <svg className="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          <p className="text-sm text-gray-500">Gambar tidak tersedia</p>
+                          <p className="text-xs text-gray-400 mt-2">URL: {result.visual}</p>
+                        </div>
+                      </div>
+                    </div>
                   ) : (
                     <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
                       <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -193,9 +324,9 @@ export default function TambahMateri() {
                 <p className="text-sm text-gray-600 mb-2">Materi visual berupa gambar dan infografis untuk memudahkan pemahaman.</p>
                 {result.visual && result.visual.startsWith('http') && (
                   <div className="text-xs">
-                    <a 
-                      href={result.visual} 
-                      target="_blank" 
+                    <a
+                      href={result.visual}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-purple-600 hover:text-purple-800 underline flex items-center"
                     >
@@ -222,14 +353,16 @@ export default function TambahMateri() {
               <div className="p-4">
                 <div className="bg-gray-100 rounded-lg overflow-hidden mb-4">
                   {result.auditori && result.auditori.includes('youtube.com') ? (
-                    <iframe
-                      className="w-full h-48"
-                      src={result.auditori.replace("watch?v=", "embed/")}
-                      title="Auditori Materi"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    ></iframe>
+                    <div className="w-full h-48 bg-black flex items-center justify-center">
+                      <iframe
+                        className="w-full h-full"
+                        src={`https://www.youtube.com/embed/${result.auditori.split('v=')[1]}`}
+                        title="Auditori Materi"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
                   ) : (
                     <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
                       <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -241,9 +374,9 @@ export default function TambahMateri() {
                 <p className="text-sm text-gray-600 mb-2">Materi audio dan video untuk pembelajaran melalui pendengaran.</p>
                 {result.auditori && result.auditori.includes('youtube.com') && (
                   <div className="text-xs">
-                    <a 
-                      href={result.auditori} 
-                      target="_blank" 
+                    <a
+                      href={result.auditori}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:text-blue-800 underline flex items-center"
                     >
@@ -269,59 +402,123 @@ export default function TambahMateri() {
               </div>
               <div className="p-4">
                 <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                  <p className="text-sm text-gray-700 leading-relaxed">{result.kinestetik}</p>
+                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{result.kinestetik}</p>
                 </div>
                 <p className="text-sm text-gray-600 mb-4">Materi praktik dan aktivitas fisik untuk pembelajaran hands-on.</p>
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
             <div className="text-center mb-6">
               <h3 className="text-lg font-semibold text-gray-800">Tambahkan Materi ke Kelas</h3>
               <p className="text-sm text-gray-600">Pilih salah satu atau semua materi untuk ditambahkan</p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button 
-                onClick={() => handleSubmitMateri('visual')} 
-                type="button" 
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md"
-              >
-                <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                </svg>
-                Tambah Materi Visual
-              </Button>
-              
-              <Button 
-                onClick={() => handleSubmitMateri('auditori')} 
-                type="button" 
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md"
-              >
-                <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                </svg>
-                Tambah Materi Auditori
-              </Button>
-              
-              <Button 
-                onClick={() => handleSubmitMateri('kinestetik')} 
-                type="button" 
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md"
-              >
-                <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                </svg>
-                Tambah Materi Kinestetik
-              </Button>
+              <div>
+                <Button
+                  onClick={() => handleSubmitMateri('visual')}
+                  type="button"
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md mb-2"
+                >
+                  <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Tambah Materi Visual
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-full ml-auto text-xs h-8 px-3 bg-white hover:bg-purple-50 text-purple-700 border-purple-300"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRegenerate('visual');
+                  }}
+                  disabled={regenerating.visual}
+                >
+                  {regenerating.visual ? (
+                    <span className="flex items-center">
+                      <svg className="animate-spin -ml-1 mr-1 h-3 w-3 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Memproses...
+                    </span>
+                  ) : 'Regenerate Materi Visual'}
+                </Button>
+              </div>
+              <div>
+                <Button
+                  onClick={() => handleSubmitMateri('auditori')}
+                  type="button"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md mb-2"
+                >
+                  <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Tambah Materi Auditori
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-full ml-auto text-xs h-8 px-3 bg-white hover:bg-blue-50 text-blue-700 border-blue-300"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRegenerate('auditori');
+                  }}
+                  disabled={regenerating.auditori}
+                >
+                  {regenerating.auditori ? (
+                    <span className="flex items-center">
+                      <svg className="animate-spin -ml-1 mr-1 h-3 w-3 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Memproses...
+                    </span>
+                  ) : 'Regenerate Materi Auditori'}
+                </Button>
+              </div>
+              <div>
+                <Button
+                  onClick={() => handleSubmitMateri('kinestetik')}
+                  type="button"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md mb-2"
+                >
+                  <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Tambah Materi Kinestetik
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-full ml-auto text-xs h-8 px-3 bg-white hover:bg-green-50 text-green-700 border-green-300"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRegenerate('kinestetik');
+                  }}
+                  disabled={regenerating.kinestetik}
+                >
+                  {regenerating.kinestetik ? (
+                    <span className="flex items-center">
+                      <svg className="animate-spin -ml-1 mr-1 h-3 w-3 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Memproses...
+                    </span>
+                  ) : 'Regenerate Materi Kinestetik'}
+                </Button>
+              </div>
             </div>
-            
+
             <div className="flex justify-center mt-6">
-              <Button 
-                onClick={handleClearMateri} 
-                type="button" 
-                variant="outline" 
+              <Button
+                onClick={handleClearMateri}
+                type="button"
+                variant="outline"
                 className="border-gray-300 text-gray-600 hover:bg-gray-50 hover:text-gray-800 font-medium py-2 px-6 rounded-lg transition-all duration-200"
               >
                 <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,9 +1,35 @@
 "use client";
+'use client';
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, PlayCircle, ImageIcon, FileText, Clock, User, Tag, Activity } from "lucide-react";
+import { BookOpen, PlayCircle, ImageIcon, FileText, Clock, User, Tag, Activity, Calendar, Clock9 } from "lucide-react";
+
+// Client-side date formatter
+function FormattedDate({ date }) {
+  const [formatted, setFormatted] = useState({ date: '', time: '' });
+
+  useEffect(() => {
+    const formatDate = async () => {
+      const { format } = await import('date-fns');
+      const { id } = await import('date-fns/locale');
+      setFormatted({
+        date: format(new Date(date), 'd MMMM yyyy', { locale: id }),
+        time: format(new Date(date), 'HH:mm', { locale: id })
+      });
+    };
+    formatDate();
+  }, [date]);
+
+  return (
+    <>
+      <span>{formatted.date}</span>
+      <span className="mx-1">•</span>
+      <span>{formatted.time} WIB</span>
+    </>
+  );
+}
 
 // Helper: konversi url youtube ke embed
 function convertYoutubeUrlToEmbed(url) {
@@ -45,6 +71,7 @@ export default function SiswaKelasPage() {
         if (!resCourse.ok) throw new Error("Gagal mengambil data kelas");
         const courseData = await resCourse.json();
         setCourse(courseData);
+        console.log("Course Data:", courseData);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -132,7 +159,7 @@ export default function SiswaKelasPage() {
                 <BookOpen className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">{course.title}</h1>
+                <h1 className="text-3xl font-bold text-gray-900 ">{course.title}</h1>
                 <div className="flex items-center gap-4 mt-1">
                   <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
                     <Tag className="w-3 h-3 mr-1" />
@@ -171,14 +198,20 @@ export default function SiswaKelasPage() {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 grid-cols-1">
               {materiSesuai.map((m) => (
                 <Card key={m.id} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="space-y-1">
-                        <CardTitle className="text-lg leading-tight">{m.title}</CardTitle>
-                        <CardDescription>
+                        <div>
+                          <CardTitle className="text-lg leading-tight">{m.title.charAt(0).toUpperCase() + m.title.slice(1)}</CardTitle>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <FormattedDate date={m.createdAt} />
+                          </div>
+                        </div>
+                        <CardDescription className="pt-2">
                           <Badge className={getLearningStyleColor(m.learningStyle)}>
                             {getLearningStyleIcon(m.learningStyle)}
                             <span className="ml-1">{m.learningStyle}</span>
