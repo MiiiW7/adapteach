@@ -48,24 +48,24 @@ export default function Home() {
         <GuestNavbar />
         
         {/* Hero Section */}
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+        <section className="w-full py-16 sm:py-20 md:py-24 lg:py-32 xl:py-48">
+          <div className="container px-6 sm:px-8 md:px-6">
+            <div className="flex flex-col items-center space-y-6 sm:space-y-8 text-center">
+              <div className="space-y-4 sm:space-y-6">
+                <h1 className="text-2xl font-bold tracking-tight leading-tight sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl/none">
                   Welcome to <span className="text-blue-600">AdapTeach</span>
                 </h1>
-                <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+                <p className="mx-auto max-w-[90%] sm:max-w-[80%] md:max-w-[700px] text-sm leading-relaxed text-gray-600 sm:text-base md:text-lg lg:text-xl dark:text-gray-400">
                 Platform pembelajaran pribadi Anda yang menyesuaikan dengan gaya dan kecepatan belajar Anda yang unik.
                 Buka potensi Anda dengan sistem pendidikan inovatif kami yang didukung oleh kecerdasan buatan (AI).
                 </p>
               </div>
-              <div className="space-x-4">
+              <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
                 <Link href="/register">
-                  <Button className="px-8 py-3 text-lg">Get Started</Button>
+                  <Button className="px-8 py-3 text-lg font-semibold">Get Started</Button>
                 </Link>
                 <Link href="/login">
-                  <Button variant="outline" className="px-8 py-3 text-lg">Login</Button>
+                  <Button variant="outline" className="px-8 py-3 text-lg font-semibold">Login</Button>
                 </Link>
               </div>
             </div>
@@ -73,19 +73,19 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-white">
-          <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">
+        <section className="w-full py-16 sm:py-20 md:py-24 lg:py-32 bg-gray-50">
+          <div className="container px-6 sm:px-8 md:px-6">
+            <h2 className="text-2xl font-bold tracking-tight leading-tight sm:text-3xl md:text-4xl lg:text-5xl text-center mb-8 sm:mb-12 md:mb-16">
               Why Choose AdapTeach?
             </h2>
-            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-8 sm:gap-10 md:gap-12 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
               {features.map((feature, index) => (
-                <div key={index} className="flex flex-col items-center text-center">
-                  <div className="mb-4 p-4 bg-gray-100 rounded-full">
+                <div key={index} className="flex flex-col items-center text-center p-4 sm:p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
+                  <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl">
                     {feature.icon}
                   </div>
-                  <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
-                  <p className="text-gray-500">{feature.description}</p>
+                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-gray-900">{feature.title}</h3>
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{feature.description}</p>
                 </div>
               ))}
             </div>
@@ -93,20 +93,20 @@ export default function Home() {
         </section>
 
         {/* CTA Section */}
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+        <section className="w-full py-16 sm:py-20 md:py-24 lg:py-32 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 text-white">
+          <div className="container px-6 sm:px-8 md:px-6">
+            <div className="flex flex-col items-center space-y-6 sm:space-y-8 text-center">
+              <div className="space-y-4 sm:space-y-6">
+                <h2 className="text-2xl font-bold tracking-tight leading-tight sm:text-3xl md:text-4xl lg:text-5xl">
                   Ready to Transform Your Learning?
                 </h2>
-                <p className="mx-auto max-w-[600px] md:text-xl">
+                <p className="mx-auto max-w-[90%] sm:max-w-[80%] md:max-w-[600px] text-sm leading-relaxed sm:text-base md:text-lg lg:text-xl text-blue-100">
                   Join thousands of students and teachers who are already using AdapTeach to achieve their educational goals.
                 </p>
               </div>
-              <div className="w-full max-w-sm space-y-2">
+              <div className="w-full max-w-xs sm:max-w-sm space-y-3">
                 <Link href="/register">
-                  <Button className="w-full py-3 text-lg bg-white text-blue-600 hover:bg-gray-100">
+                  <Button className="w-full py-3 sm:py-4 text-base sm:text-lg font-medium bg-white text-blue-600 hover:bg-gray-50 hover:shadow-lg transition-all duration-200 rounded-lg">
                     Create Free Account
                   </Button>
                 </Link>

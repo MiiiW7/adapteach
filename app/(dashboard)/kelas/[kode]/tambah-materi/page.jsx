@@ -190,17 +190,17 @@ export default function TambahMateri() {
 
 
   return (
-    <div className="max-w-6xl mx-auto p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
-      <div className="text-center px-2">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1 sm:mb-2">Tambah Materi Baru</h1>
-        <p className="text-sm sm:text-base text-gray-600 px-2">Buat materi pembelajaran dengan gaya visual, auditori, dan kinestetik</p>
+    <div className="max-w-6xl mx-auto p-6 space-y-8">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">Tambah Materi Baru</h1>
+        <p className="text-gray-600">Buat materi pembelajaran dengan gaya visual, auditori, dan kinestetik</p>
       </div>
 
-      <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 border border-gray-200">
-        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-          <div className="flex flex-col gap-3 sm:gap-4">
+      <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex flex-col md:flex-row md:items-end md:gap-4">
             <div className="flex-1">
-              <Label htmlFor="topik" className="block text-sm font-semibold mb-1 sm:mb-2 text-gray-700">
+              <Label htmlFor="topik" className="block text-sm font-semibold mb-2 text-gray-700">
                 Topik Materi
               </Label>
               <Input
@@ -210,19 +210,19 @@ export default function TambahMateri() {
                 required
                 disabled={loading}
                 placeholder="Masukkan topik materi..."
-                className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
+                className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
-            <div className="flex flex-col gap-2">
-              {error && <div className="text-red-500 text-sm">{error}</div>}
+            {error && <div className="text-red-500 text-sm md:hidden">{error}</div>}
+            <div className="mt-4 md:mt-0">
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base w-full sm:w-auto"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6"
               >
                 {loading ? (
-                  <span className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-2 h-3 sm:h-4 w-3 sm:w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <span className="flex items-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -232,51 +232,55 @@ export default function TambahMateri() {
               </Button>
             </div>
           </div>
+          {error && (
+            <div className="text-red-500 text-sm hidden md:block bg-red-50 p-3 rounded-md border border-red-200">
+              {error}
+            </div>
+          )}
         </form>
       </div>
 
       {isClient && result && result.visual && result.auditori && result.kinestetik && (
         <div className="space-y-8" key="result-content">
-          <div className="text-center px-2">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Hasil Materi</h2>
-            <p className="text-sm sm:text-base text-gray-600">Pilih materi yang ingin Anda tambahkan ke kelas</p>
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-800">Hasil Materi</h2>
+            <p className="text-gray-600">Pilih materi yang ingin Anda tambahkan ke kelas</p>
           </div>
 
           {/* Explanation Section */}
-          <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 border border-gray-200 mb-4 sm:mb-6">
-            <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Penjelasan Gaya Belajar</h3>
-            <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-              <h4 className="font-semibold text-gray-800 mb-1 sm:mb-2 text-sm sm:text-base">Penjelasan Materi</h4>
+          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200 mb-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Penjelasan Gaya Belajar</h3>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h4 className="font-semibold text-gray-800 mb-2">Penjelasan Materi</h4>
               <p className="text-sm text-gray-700 leading-relaxed">
                 {result.penjelasam || "Penjelasan umum tentang materi yang akan dipelajari."}
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Visual Card */}
             <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow-md border border-purple-200 overflow-hidden">
-              <div className="bg-purple-600 text-white p-3 sm:p-4">
-                <h3 className="font-bold text-base sm:text-lg flex items-center">
-                  <svg className="w-4 sm:w-5 h-4 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-purple-600 text-white p-4">
+                <h3 className="font-bold text-lg flex items-center">
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                   </svg>
                   Visual
                 </h3>
               </div>
-              <div className="p-3 sm:p-4">
-                <div className="bg-gray-100 rounded-lg overflow-hidden mb-3 sm:mb-4 flex items-center justify-center" style={{ minHeight: '160px', maxHeight: '192px' }}>
+              <div className="p-4">
+                <div className="bg-gray-100 rounded-lg overflow-hidden mb-4 flex items-center justify-center" style={{ minHeight: '192px' }}>
                   {result.visual && result.visual.startsWith('http') ? (
                     <div className="w-full h-full flex items-center justify-center relative">
                       <img
                         src={result.visual}
                         alt="Visual Materi"
-                        className="max-w-full max-h-40 sm:max-h-48 w-auto h-auto object-contain p-1 sm:p-2"
-                        style={{ maxWidth: '100%', maxHeight: '160px' }}
+                        className="max-w-full max-h-48 w-auto h-auto object-contain p-2"
+                        style={{ maxWidth: '100%', maxHeight: '192px' }}
                         crossOrigin="anonymous"
                         referrerPolicy="no-referrer"
                         onError={(e) => {
-                          console.error('Image failed to load:', result.visual);
                           // Try loading with proxy service
                           const proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(result.visual.replace(/^https?:\/\//, ''))}`;
                           console.log('Trying proxy:', proxyUrl);
@@ -298,32 +302,32 @@ export default function TambahMateri() {
                           console.log('Image loaded successfully:', result.visual);
                         }}
                       />
-                      <div className="w-full h-40 sm:h-48 bg-gray-200 flex items-center justify-center" style={{ display: 'none' }}>
-                        <div className="text-center p-2">
-                          <svg className="w-10 sm:w-12 h-10 sm:h-12 text-gray-400 mx-auto mb-1 sm:mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-full h-48 bg-gray-200 flex items-center justify-center" style={{ display: 'none' }}>
+                        <div className="text-center">
+                          <svg className="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
-                          <p className="text-xs sm:text-sm text-gray-500">Gambar tidak tersedia</p>
-                          <p className="text-xs text-gray-400 mt-1">URL: {result.visual}</p>
+                          <p className="text-sm text-gray-500">Gambar tidak tersedia</p>
+                          <p className="text-xs text-gray-400 mt-2">URL: {result.visual}</p>
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <div className="w-full h-40 sm:h-48 bg-gray-200 flex items-center justify-center">
-                      <svg className="w-10 sm:w-12 h-10 sm:h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                      <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     </div>
                   )}
                 </div>
-                <p className="text-xs sm:text-sm text-gray-600 mb-2">Materi visual berupa gambar dan infografis untuk memudahkan pemahaman.</p>
+                <p className="text-sm text-gray-600 mb-2">Materi visual berupa gambar dan infografis untuk memudahkan pemahaman.</p>
                 {result.visual && result.visual.startsWith('http') && (
                   <div className="text-xs">
                     <a
                       href={result.visual}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-purple-600 hover:text-purple-800 underline flex items-center touch-manipulation"
+                      className="text-purple-600 hover:text-purple-800 underline flex items-center"
                     >
                       <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -399,25 +403,25 @@ export default function TambahMateri() {
                 <div className="bg-gray-50 rounded-lg p-4 mb-4">
                   <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{result.kinestetik}</p>
                 </div>
-                <p className="text-xs sm:text-sm text-gray-600 mb-4">Materi praktik dan aktivitas fisik untuk pembelajaran hands-on.</p>
+                <p className="text-sm text-gray-600 mb-4">Materi praktik dan aktivitas fisik untuk pembelajaran hands-on.</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 border border-gray-200">
-            <div className="text-center mb-4 sm:mb-6">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-800">Tambahkan Materi ke Kelas</h3>
-              <p className="text-xs sm:text-sm text-gray-600">Pilih salah satu atau semua materi untuk ditambahkan</p>
+          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+            <div className="text-center mb-6">
+              <h3 className="text-lg font-semibold text-gray-800">Tambahkan Materi ke Kelas</h3>
+              <p className="text-sm text-gray-600">Pilih salah satu atau semua materi untuk ditambahkan</p>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Button
                   onClick={() => handleSubmitMateri('visual')}
                   type="button"
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md mb-2 text-sm sm:text-base"
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md mb-2"
                 >
-                  <svg className="w-3 sm:w-4 h-3 sm:h-4 inline mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
                   </svg>
                   Tambah Materi Visual
@@ -425,7 +429,7 @@ export default function TambahMateri() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="w-full ml-auto text-xs h-7 sm:h-8 px-2 sm:px-3 bg-white hover:bg-purple-50 text-purple-700 border-purple-300"
+                  className="w-full ml-auto text-xs h-8 px-3 bg-white hover:bg-purple-50 text-purple-700 border-purple-300"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRegenerate('visual');
@@ -433,14 +437,14 @@ export default function TambahMateri() {
                   disabled={regenerating.visual}
                 >
                   {regenerating.visual ? (
-                    <span className="flex items-center justify-center">
-                      <svg className="animate-spin -ml-1 mr-1 h-2.5 sm:h-3 w-2.5 sm:w-3 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <span className="flex items-center">
+                      <svg className="animate-spin -ml-1 mr-1 h-3 w-3 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
                       Memproses...
                     </span>
-                  ) : 'Regenerate'}
+                  ) : 'Regenerate Materi Visual'}
                 </Button>
               </div>
               <div>
@@ -509,14 +513,14 @@ export default function TambahMateri() {
               </div>
             </div>
 
-            <div className="flex justify-center mt-4 sm:mt-6">
+            <div className="flex justify-center mt-6">
               <Button
                 onClick={handleClearMateri}
                 type="button"
                 variant="outline"
-                className="border-gray-300 text-gray-600 hover:bg-gray-50 hover:text-gray-800 font-medium py-2 px-4 sm:px-6 rounded-lg transition-all duration-200 text-sm sm:text-base"
+                className="border-gray-300 text-gray-600 hover:bg-gray-50 hover:text-gray-800 font-medium py-2 px-6 rounded-lg transition-all duration-200"
               >
-                <svg className="w-3 sm:w-4 h-3 sm:h-4 inline mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
                 Clear Semua Materi

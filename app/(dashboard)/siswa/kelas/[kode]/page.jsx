@@ -91,7 +91,7 @@ export default function SiswaKelasPage() {
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100 flex items-center justify-center">
@@ -109,7 +109,7 @@ export default function SiswaKelasPage() {
       </div>
     );
   }
-  
+
   if (!course || !user) return null;
 
   // Filter materi sesuai learningStyle user
@@ -149,148 +149,191 @@ export default function SiswaKelasPage() {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
         <div className="mb-8">
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 ">{course.title}</h1>
-                <div className="flex items-center gap-4 mt-1">
-                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                    <Tag className="w-3 h-3 mr-1" />
-                    {course.code}
-                  </Badge>
-                  {user.learningStyle && (
-                    <Badge className={getLearningStyleColor(user.learningStyle)}>
-                      {getLearningStyleIcon(user.learningStyle)}
-                      <span className="ml-1">{user.learningStyle}</span>
+          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-8 text-white">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                <div className="relative">
+                  <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                    <BookOpen className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                    <div className="w-3 h-3 bg-white rounded-full"></div>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h1 className="text-3xl sm:text-4xl font-bold mb-2">{course.title}</h1>
+                  <p className="text-white/90 text-lg leading-relaxed">{course.description}</p>
+                  <div className="flex flex-wrap items-center gap-3 mt-4">
+                    <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 hover:bg-white/30 transition-colors">
+                      <Tag className="w-4 h-4 mr-1" />
+                      {course.code}
                     </Badge>
-                  )}
+                    {user.learningStyle && (
+                      <Badge className={`${getLearningStyleColor(user.learningStyle)} backdrop-blur-sm border-white/30`}>
+                        {getLearningStyleIcon(user.learningStyle)}
+                        <span className="ml-1">{user.learningStyle}</span>
+                      </Badge>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-            <p className="text-gray-600 leading-relaxed">{course.description}</p>
           </div>
         </div>
 
         {/* Personalized Learning Section */}
         <div className="mb-8">
-          <div className="flex items-center gap-2 mb-6">
-            <User className="w-5 h-5 text-gray-600" />
-            <h2 className="text-xl font-semibold text-gray-800">
-              Materi yang Dipersonalisasi untuk Anda
-            </h2>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg">
+              <User className="w-5 h-5 text-purple-600" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Materi yang Dipersonalisasi untuk Anda
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">Konten yang disesuaikan dengan gaya belajar Anda</p>
+            </div>
           </div>
-          
+
           {materiSesuai.length === 0 ? (
-            <Card className="border-dashed">
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <BookOpen className="w-8 h-8 text-gray-400" />
+            <Card className="border-2 border-dashed border-gray-200 bg-gray-50/50">
+              <CardContent className="flex flex-col items-center justify-center py-16">
+                <div className="relative">
+                  <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-4">
+                    <BookOpen className="w-10 h-10 text-gray-400" />
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-orange-400 rounded-full animate-pulse"></div>
                 </div>
-                <p className="text-gray-500 text-center">Belum ada materi yang sesuai dengan gaya belajar Anda.</p>
-                <p className="text-sm text-gray-400 mt-2">Tim kami sedang menyiapkan konten yang lebih relevan.</p>
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">Belum Ada Materi</h3>
+                <p className="text-gray-500 text-center max-w-sm">Belum ada materi yang sesuai dengan gaya belajar Anda saat ini.</p>
+                <p className="text-sm text-gray-400 mt-2">Tim kami sedang menyiapkan konten yang lebih relevan untuk Anda.</p>
+                <div className="mt-4 flex gap-2">
+                  <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                  <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                  <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                </div>
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-6 grid-cols-1">
+            <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
               {materiSesuai.map((m) => (
-                <Card key={m.id} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                  <CardHeader>
+                <Card key={m.id} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 border border-gray-100 hover:border-gray-200">
+                  <CardHeader className="pb-2">
                     <div className="flex items-start justify-between">
-                      <div className="space-y-1">
-                        <div>
-                          <CardTitle className="text-lg leading-tight">{m.title.charAt(0).toUpperCase() + m.title.slice(1)}</CardTitle>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                            <Calendar className="w-3.5 h-3.5" />
-                            <FormattedDate date={m.createdAt} />
-                          </div>
+                      <div className="space-y-1 flex-1">
+                        <CardTitle className="text-lg font-semibold leading-tight text-gray-900">
+                          {m.title.charAt(0).toUpperCase() + m.title.slice(1)}
+                        </CardTitle>
+                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                          <Calendar className="w-3 h-3" />
+                          <FormattedDate date={m.createdAt} />
                         </div>
-                        <CardDescription className="pt-2">
-                          <Badge className={getLearningStyleColor(m.learningStyle)}>
-                            {getLearningStyleIcon(m.learningStyle)}
-                            <span className="ml-1">{m.learningStyle}</span>
-                          </Badge>
-                        </CardDescription>
                       </div>
+                      <Badge className={`${getLearningStyleColor(m.learningStyle)} text-xs px-1.5 py-0.5`}>
+                        {getLearningStyleIcon(m.learningStyle)}
+                        <span className="ml-1">{m.learningStyle}</span>
+                      </Badge>
                     </div>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="pt-0">
                     {/* Content based on learning style */}
                     {user.learningStyle?.toLowerCase() === "auditory" && m.content.match(/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i) ? (
-                      <div className="space-y-3">
-                        <div className="aspect-video w-full rounded-lg overflow-hidden bg-gray-100">
+                      <div className="space-y-4">
+                        <div className="aspect-video w-full rounded-lg overflow-hidden bg-gray-100 shadow-sm">
                           <iframe
                             src={convertYoutubeUrlToEmbed(m.content)}
                             title={m.title}
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen
-                            className="w-full h-full"
+                            className="w-full h-full border-0"
                           ></iframe>
                         </div>
-                        <a 
-                          href={m.content} 
-                          target="_blank" 
+                        <a
+                          href={m.content}
+                          target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                          className="inline-flex items-center gap-2 text-sm bg-purple-100 hover:bg-purple-200 text-purple-700 px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-md"
                         >
                           <PlayCircle className="w-4 h-4" />
-                          Buka di YouTube
+                          Tonton di YouTube
                         </a>
-                        {/* {m.explanation && (
-                          <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
-                            <h4 className="text-sm font-semibold text-purple-800 mb-2">Penjelasan</h4>
-                            <p className="text-sm text-gray-700 leading-relaxed">
-                              {m.explanation}
-                            </p>
-                          </div>
-                        )} */}
                       </div>
                     ) : user.learningStyle?.toLowerCase() === "visual" && m.content.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) ? (
-                      <div className="space-y-3">
-                        <div className="relative overflow-hidden rounded-lg">
-                          <img 
-                            src={m.content} 
-                            alt={m.title} 
-                            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" 
+                      <div className="space-y-4">
+                        <div className="relative overflow-hidden rounded-xl flex justify-center items-center bg-gray-50">
+                          <img
+                            src={m.content}
+                            alt="Visual Materi"
+                            className="w-auto h-auto object-contain p-2"
+                            style={{ maxWidth: '100%', maxHeight: '240px' }}
+                            crossOrigin="anonymous"
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              // Try loading with proxy service
+                              const proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(m.content.replace(/^https?:\/\//, ''))}`;
+                              console.log('Trying proxy:', proxyUrl);
+
+                              // Create new image element to test proxy
+                              const testImg = new Image();
+                              testImg.onload = () => {
+                                e.target.src = proxyUrl;
+                                e.target.style.display = 'block';
+                                e.target.nextElementSibling.style.display = 'none';
+                              };
+                              testImg.onerror = () => {
+                                e.target.style.display = 'none';
+                                e.target.nextElementSibling.style.display = 'flex';
+                              };
+                              testImg.src = proxyUrl;
+                            }}
+                            onLoad={(e) => {
+                              console.log('Image loaded successfully:', m.content);
+                            }}
                           />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl"></div>
                         </div>
-                        <a 
-                          href={m.content} 
-                          target="_blank" 
+                        <a
+                          href={m.content}
+                          target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                          className="inline-flex items-center gap-2 text-sm bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-md"
                         >
-                          <PlayCircle className="w-4 h-4" />
-                          Lihat Media
+                          <ImageIcon className="w-4 h-4" />
+                          Lihat Gambar
                         </a>
                       </div>
                     ) : user.learningStyle?.toLowerCase() === "kinesthetic" ? (
                       <div className="space-y-4">
-                        <div className="bg-orange-50 border-l-4 border-orange-400 p-4 rounded-r">
-                          <div className="flex">
+                        <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-l-3 border-orange-400 p-3 rounded-lg">
+                          <div className="flex items-start">
                             <div className="flex-shrink-0">
-                              <Activity className="h-5 w-5 text-orange-600" />
+                              <Activity className="h-6 w-6 text-orange-600" />
                             </div>
-                            <div className="ml-3">
-                              <h3 className="text-sm font-medium text-orange-800">Panduan Praktik</h3>
-                              <div className="mt-2 text-sm text-orange-700">
+                            <div className="ml-4 flex-1">
+                              <h3 className="text-sm font-semibold text-orange-800 mb-1">Panduan Praktik</h3>
+                              <div className="text-xs text-orange-700 leading-relaxed">
                                 <p className="whitespace-pre-line">{m.content}</p>
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    ) : null}
+                    ) : (
+                      <div className="prose prose-xs max-w-none">
+                        <p className="text-gray-700 leading-relaxed text-sm">{m.content}</p>
+                      </div>
+                    )}
                     {m.explanation && (
-                      <div className="mt-4 pt-3 border-t border-gray-100">
-                        <h4 className="text-sm font-semibold text-gray-800 mb-2">Penjelasan</h4>
-                        <p className="text-sm text-gray-600 leading-relaxed">
+                      <div className="mt-3 pt-3 border-t border-gray-100">
+                        <h4 className="text-xs font-semibold text-gray-800 mb-2 flex items-center gap-1.5">
+                          <FileText className="w-3 h-3" />
+                          Penjelasan Tambahan
+                        </h4>
+                        <p className="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded-md">
                           {m.explanation}
                         </p>
                       </div>
@@ -303,43 +346,58 @@ export default function SiswaKelasPage() {
         </div>
 
         {/* Stats Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
-            <CardContent className="pt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
+          <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <CardContent className="pt-6 pb-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-blue-600">Total Materi</p>
-                  <p className="text-2xl font-bold text-blue-900">{course.materials?.length || 0}</p>
+                  <p className="text-sm font-medium text-blue-100">Total Materi</p>
+                  <p className="text-3xl font-bold">{course.materials?.length || 0}</p>
                 </div>
-                <BookOpen className="w-8 h-8 text-blue-600" />
+                <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-sm">
+                  <BookOpen className="w-8 h-8" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm text-blue-100">
+                <span className="text-xs">Materi tersedia</span>
               </div>
             </CardContent>
           </Card>
-          
-          <Card className="bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200">
-            <CardContent className="pt-6">
+
+          <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <CardContent className="pt-6 pb-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-purple-600">Materi Sesuai</p>
-                  <p className="text-2xl font-bold text-purple-900">{materiSesuai.length}</p>
+                  <p className="text-sm font-medium text-purple-100">Materi Sesuai</p>
+                  <p className="text-3xl font-bold">{materiSesuai.length}</p>
                 </div>
-                <div className="w-8 h-8 rounded-full bg-purple-200 flex items-center justify-center">
-                  <User className="w-5 h-5 text-purple-700" />
+                <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-sm">
+                  <div className="w-8 h-8 rounded-full bg-white/30 flex items-center justify-center">
+                    <User className="w-5 h-5" />
+                  </div>
                 </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm text-purple-100">
+                <span className="text-xs">Disesuaikan untuk Anda</span>
               </div>
             </CardContent>
           </Card>
-          
-          <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200">
-            <CardContent className="pt-6">
+
+          <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <CardContent className="pt-6 pb-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-green-600">Gaya Belajar</p>
-                  <p className="text-lg font-bold text-green-900 capitalize">{user.learningStyle || "Umum"}</p>
+                  <p className="text-sm font-medium text-green-100">Gaya Belajar</p>
+                  <p className="text-xl font-bold capitalize">{user.learningStyle || "Umum"}</p>
                 </div>
-                <div className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center">
-                  {getLearningStyleIcon(user.learningStyle)}
+                <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-sm">
+                  <div className="w-8 h-8 rounded-full bg-white/30 flex items-center justify-center">
+                    {getLearningStyleIcon(user.learningStyle)}
+                  </div>
                 </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm text-green-100">
+                <span className="text-xs">Profil belajar Anda</span>
               </div>
             </CardContent>
           </Card>

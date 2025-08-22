@@ -48,13 +48,13 @@ const Footer7 = ({
     url: "/",
     src: "/globe.svg",
     alt: "logo",
-    title: "AdapTech",
+    title: "AdapTeach",
   },
 
   sections = defaultSections,
-  description = "A collection of components for your startup business or side project.",
+  description = "Platform pembelajaran AI terdepan yang menghadirkan revolusi dalam cara belajar dan mengajar.",
   socialLinks = defaultSocialLinks,
-  copyright = "© 2025 AdapTech. All rights reserved.",
+  copyright = "© 2025 AdapTeach. All rights reserved.",
   legalLinks = defaultLegalLinks
 }) => {
   return (
