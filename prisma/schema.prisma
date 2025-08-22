@@ -20,16 +20,17 @@ enum Role {
 }
 
 model User {
-  id               Int       @id @default(autoincrement())
-  name             String
-  email            String    @unique
-  password         String
-  role             Role      @default(STUDENT)
-  learningStyle    String?
-  enrollments      Enrollment[]
-  teachingCourses  Course[]  @relation("TeacherCourses")
-  createdAt        DateTime  @default(now())
+  id              Int       @id @default(autoincrement())
+  name            String
+  email           String    @unique
+  password        String
+  role            Role      @default(STUDENT)
+  learningStyle   String?   @map("learning_style")   // 👈 mapping ke kolom snake_case
+  enrollments     Enrollment[]
+  teachingCourses Course[]  @relation("TeacherCourses")
+  createdAt       DateTime  @default(now()) @map("created_at") // 👈 juga map created_at
 }
+
 
 model Course {
   id          Int           @id @default(autoincrement())
