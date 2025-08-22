@@ -3,30 +3,12 @@ import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
 
 const defaultSections = [
   {
-    title: "Product",
+    title: "Team",
     links: [
-      { name: "Overview", href: "#" },
-      { name: "Pricing", href: "#" },
-      { name: "Marketplace", href: "#" },
-      { name: "Features", href: "#" },
-    ],
-  },
-  {
-    title: "Company",
-    links: [
-      { name: "About", href: "#" },
-      { name: "Team", href: "#" },
-      { name: "Blog", href: "#" },
-      { name: "Careers", href: "#" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { name: "Help", href: "#" },
-      { name: "Sales", href: "#" },
-      { name: "Advertise", href: "#" },
-      { name: "Privacy", href: "#" },
+      { name: "Andrian ", href: "#" },
+      { name: "Hilmi  ", href: "https://www.linkedin.com/in/hilmimfadlan" },
+      { name: "Aditya ", href: "#" },
+      { name: "Zacky", href: "#" },
     ],
   },
 ];
@@ -52,7 +34,7 @@ const Footer7 = ({
   },
 
   sections = defaultSections,
-  description = "Platform pembelajaran AI terdepan yang menghadirkan revolusi dalam cara belajar dan mengajar.",
+  description = "Platform pembelajaran berbasis AI yang membantu guru dalam membuat materi pembelajaran sesuai dengan gaya belajar VAK.",
   socialLinks = defaultSocialLinks,
   copyright = "© 2025 AdapTeach. All rights reserved.",
   legalLinks = defaultLegalLinks
@@ -65,12 +47,12 @@ const Footer7 = ({
           <div className="flex w-full flex-col justify-between gap-6 lg:items-start">
             {/* Logo */}
             <div className="flex items-center gap-2 lg:justify-start">
-              <a href={logo.url}>
+              {/* <a href={logo.url}>
                 <img src={logo.src} alt={logo.alt} title={logo.title} className="h-8" />
-              </a>
+              </a> */}
               <h2 className="text-xl font-semibold">{logo.title}</h2>
             </div>
-            <p className="text-muted-foreground max-w-[70%] text-sm">
+            <p className="text-muted-foreground max-w-[50%] text-sm">
               {description}
             </p>
             <ul className="text-muted-foreground flex items-center space-x-6">
@@ -83,14 +65,14 @@ const Footer7 = ({
               ))}
             </ul>
           </div>
-          <div className="grid w-full gap-6 md:grid-cols-3 lg:gap-20">
+          <div className="grid w-[15%] gap-6 md:grid-cols-3 lg:gap-20 lg:justify-end lg:text-right">
             {sections.map((section, sectionIdx) => (
               <div key={sectionIdx}>
                 <h3 className="mb-4 font-bold">{section.title}</h3>
                 <ul className="text-muted-foreground space-y-3 text-sm">
                   {section.links.map((link, linkIdx) => (
                     <li key={linkIdx} className="hover:text-primary font-medium">
-                      <a href={link.href}>{link.name}</a>
+                      <a href={link.href} target="_blank">{link.name}</a>
                     </li>
                   ))}
                 </ul>

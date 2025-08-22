@@ -25,7 +25,26 @@ export async function GET(request, context) {
   try {
     const course = await prisma.course.findUnique({
       where: { code },
-      include: { materials: true },
+      include: { 
+        materials: true,
+        teacher: {
+          select: {
+            name: true,
+            email: true
+          }
+        },
+        enrollments: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true
+              }
+            }
+          }
+        }
+      },
     });
     if (!course) {
       return Response.json({ error: 'Kelas tidak ditemukan' }, { status: 404 });
@@ -33,7 +52,15 @@ export async function GET(request, context) {
     if (course.teacherId !== user.userId) {
       return Response.json({ error: 'Forbidden: Anda bukan pembuat kelas ini' }, { status: 403 });
     }
-    return Response.json(course);
+    
+    // Add student count to response
+    const courseWithStudentCount = {
+      ...course,
+      studentCount: course.enrollments?.length || 0,
+      students: course.enrollments?.map(e => e.user) || []
+    };
+    
+    return Response.json(courseWithStudentCount);
   } catch (error) {
     console.error('Error fetching course by code:', error);
     return Response.json({ error: 'Gagal mengambil data kelas' }, { status: 500 });
