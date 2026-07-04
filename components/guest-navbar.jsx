@@ -16,7 +16,7 @@ export default function GuestNavbar() {
         <div className="flex items-center gap-3">
           <Link
             href="/login"
-            className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors border-2 border-gray-600 rounded-lg"
+            className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors border-2 border-indigo-600 rounded-lg"
           >
             Login
           </Link>

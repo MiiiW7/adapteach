@@ -1,7 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export async function POST(request) {
   try {
@@ -29,12 +31,28 @@ export async function POST(request) {
       },
     });
 
+    // Generate JWT token with user data
+    const token = jwt.sign(
+      { 
+        userId: newUser.id, 
+        email: newUser.email,
+        name: newUser.name || newUser.email.split('@')[0],
+        role: newUser.role || 'STUDENT'
+      },
+      JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
     // Jangan kirim hash ke client
     const { password: _, ...userWithoutPassword } = newUser;
 
-    return Response.json({ user: userWithoutPassword }, { status: 201 });
+    return Response.json({ 
+      user: userWithoutPassword, 
+      token 
+    }, { status: 201 });
   } catch (error) {
     console.error('Registration error:', error);
     return Response.json({ error: 'Failed to register user' }, { status: 500 });
   }
 }
+

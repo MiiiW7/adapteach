@@ -59,14 +59,29 @@ const Signup2 = ({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Registrasi gagal');
-      setSuccess('Registrasi berhasil!');
-      setTimeout(() => router.push('/'), 1200);
+      
+      setSuccess('Registrasi berhasil! Mengalihkan ke dashboard...');
+      
+      // Auto login: simpan token dan role
+      if (data.token) localStorage.setItem('token', data.token);
+      if (data.user && data.user.role) localStorage.setItem('role', data.user.role);
+
+      setTimeout(() => {
+        if (data.user && data.user.role === 'STUDENT') {
+          router.replace('/siswa');
+        } else if (data.user && data.user.role === 'TEACHER') {
+          router.replace('/guru');
+        } else {
+          router.replace('/');
+        }
+      }, 1200);
     } catch (err) {
       setError(err.message);
     } finally {
       setIsLoading(false);
     }
   };
+
 
   return (
     <section className="bg-muted h-screen">
