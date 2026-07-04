@@ -47,6 +47,12 @@ export function AppSidebar(props) {
   const [allowed, setAllowed] = useState(false)
   const [studentClasses, setStudentClasses] = useState([])
   const [courses, setCourses] = useState([])
+  const [userRole, setUserRole] = useState("")
+  const [user, setUser] = useState({
+    name: "User",
+    email: "",
+    avatar: "",
+  })
 
   const fetchCourses = async () => {
     try {
@@ -107,7 +113,27 @@ export function AppSidebar(props) {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token")
       const role = localStorage.getItem("role")
+      setUserRole(role || "")
+
+      if (token) {
+        try {
+          const payloadBase64 = token.split('.')[1]
+          if (payloadBase64) {
+            const payloadJson = atob(payloadBase64.replace(/-/g, '+').replace(/_/g, '/'))
+            const decoded = JSON.parse(payloadJson)
+            setUser({
+              name: decoded.name || "User",
+              email: decoded.email || "",
+              avatar: "",
+            })
+          }
+        } catch (e) {
+          console.error("Gagal decode token di sidebar", e)
+        }
+      }
+
       if (role === "TEACHER") {
         setAllowed(true)
         fetchCourses()
@@ -120,14 +146,34 @@ export function AppSidebar(props) {
     }
   }, [])
 
+  // Dynamic main navigation links based on user role
+  const dynamicNavMain = [
+    {
+      title: "Dashboard",
+      url: userRole === "TEACHER" ? "/guru" : userRole === "STUDENT" ? "/siswa" : "/",
+      icon: House,
+    },
+    {
+      title: "Gaya Belajar",
+      url: userRole === "STUDENT" ? "/siswa/pilih-gaya-belajar" : "#",
+      icon: Bot,
+      hidden: userRole !== "STUDENT",
+    },
+    {
+      title: "Profil & Settings",
+      url: "/profile",
+      icon: Settings2,
+    },
+  ].filter(item => !item.hidden)
+
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader />
-      <SidebarContent>
-        <NavMain items={navMain} />
+    <Sidebar collapsible="icon" className="border-r border-slate-100 bg-white" {...props}>
+      <SidebarHeader className="h-4" />
+      <SidebarContent className="px-2">
+        <NavMain items={dynamicNavMain} />
         {allowed && (
           <>
-            {localStorage.getItem("role") === "STUDENT" ? (
+            {userRole === "STUDENT" ? (
               <NavProjects projects={studentClasses} />
             ) : (
               <NavProjects projects={courses} />
@@ -135,10 +181,11 @@ export function AppSidebar(props) {
           </>
         )}
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="p-2 border-t border-slate-50">
         <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )
 }
+
