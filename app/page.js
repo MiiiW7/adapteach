@@ -76,10 +76,6 @@ export default function Home() {
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
               <div className="lg:col-span-6 flex flex-col items-start text-left space-y-6 sm:space-y-8">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-xs font-semibold text-indigo-700">
-                  <Sparkles className="h-3.5 w-3.5 text-indigo-600" />
-                  <span>Platform Belajar Adaptif No. 1</span>
-                </div>
                 <div className="space-y-4 sm:space-y-6">
                   <h1 className="text-4xl font-extrabold tracking-tight leading-tight sm:text-5xl md:text-6xl text-slate-900">
                     Belajar Lebih Cerdas Dengan <span className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">AI Adaptif</span>
