@@ -168,7 +168,7 @@ export function AppSidebar(props) {
 
   return (
     <Sidebar collapsible="icon" className="border-r border-slate-100 bg-white" {...props}>
-      <SidebarHeader className="h-4" />
+      <SidebarHeader className="pt-6" />
       <SidebarContent className="px-2">
         <NavMain items={dynamicNavMain} />
         {allowed && (

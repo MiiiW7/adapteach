@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, PlayCircle, ImageIcon, FileText, Clock, User, Tag, Activity, Calendar, Clock9 } from "lucide-react";
+import Link from "next/link";
+import { BookOpen, PlayCircle, ImageIcon, FileText, Clock, User, Tag, Activity, Calendar, Clock9, ArrowLeft } from "lucide-react";
 
 // Client-side date formatter
 function FormattedDate({ date }) {
@@ -94,7 +95,7 @@ export default function SiswaKelasPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100 flex items-center justify-center">
+      <div className="min-h-screen bg-red-50 flex items-center justify-center">
         <Card className="max-w-md">
           <CardHeader>
             <CardTitle className="text-red-600 flex items-center gap-2">
@@ -149,19 +150,27 @@ export default function SiswaKelasPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <div className="min-h-screen bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Back Button */}
+        <div className="mb-6">
+          <Link
+            href="/siswa"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Kembali ke Dashboard
+          </Link>
+        </div>
+
         {/* Header Section */}
         <div className="mb-8">
           <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-8 text-white">
+            <div className="bg-indigo-600 p-8 text-white">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
                 <div className="relative">
                   <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
                     <BookOpen className="w-8 h-8 text-white" />
-                  </div>
-                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                    <div className="w-3 h-3 bg-white rounded-full"></div>
                   </div>
                 </div>
                 <div className="flex-1">
@@ -188,7 +197,7 @@ export default function SiswaKelasPage() {
         {/* Personalized Learning Section */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg">
+            <div className="p-2 bg-purple-100 rounded-lg">
               <User className="w-5 h-5 text-purple-600" />
             </div>
             <div>
@@ -203,10 +212,9 @@ export default function SiswaKelasPage() {
             <Card className="border-2 border-dashed border-gray-200 bg-gray-50/50">
               <CardContent className="flex flex-col items-center justify-center py-16">
                 <div className="relative">
-                  <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-4">
+                  <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                     <BookOpen className="w-10 h-10 text-gray-400" />
                   </div>
-                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-orange-400 rounded-full animate-pulse"></div>
                 </div>
                 <h3 className="text-lg font-semibold text-gray-700 mb-2">Belum Ada Materi</h3>
                 <p className="text-gray-500 text-center max-w-sm">Belum ada materi yang sesuai dengan gaya belajar Anda saat ini.</p>
@@ -294,7 +302,6 @@ export default function SiswaKelasPage() {
                               console.log('Image loaded successfully:', m.content);
                             }}
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl"></div>
                         </div>
                         <a
                           href={m.content}
@@ -308,7 +315,7 @@ export default function SiswaKelasPage() {
                       </div>
                     ) : user.learningStyle?.toLowerCase() === "kinesthetic" ? (
                       <div className="space-y-4">
-                        <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-l-3 border-orange-400 p-3 rounded-lg">
+                        <div className="bg-orange-50 border-l-3 border-orange-400 p-3 rounded-lg">
                           <div className="flex items-start">
                             <div className="flex-shrink-0">
                               <Activity className="h-6 w-6 text-orange-600" />
@@ -347,7 +354,7 @@ export default function SiswaKelasPage() {
 
         {/* Stats Section */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
-          <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <Card className="bg-blue-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <CardContent className="pt-6 pb-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -364,7 +371,7 @@ export default function SiswaKelasPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <Card className="bg-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <CardContent className="pt-6 pb-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -383,7 +390,7 @@ export default function SiswaKelasPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <Card className="bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <CardContent className="pt-6 pb-4">
               <div className="flex items-center justify-between">
                 <div>
