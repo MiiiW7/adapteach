@@ -57,12 +57,18 @@ export function AppSidebar(props) {
   const fetchCourses = async () => {
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
-
       const res = await fetch("/api/courses", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
+
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        window.location.href = "/login";
+        return;
+      }
 
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Gagal mengambil data kelas")
@@ -88,6 +94,13 @@ export function AppSidebar(props) {
           Authorization: `Bearer ${token}`,
         },
       })
+
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        window.location.href = "/login";
+        return;
+      }
 
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Gagal mengambil data kelas siswa")
