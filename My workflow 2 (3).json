@@ -1,0 +1,424 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topik: {{ $('Webhook').item.json.body.topik }}. \nBuatkan materi belajar dengan 3 gaya belajar:\n- visual → berikan URL gambar/ilustrasi yang relevan,\n- auditori → berikan URL video penjelasan,\n- kinestetik → langkah praktik singkat, instruksional, berbentuk list bernomor,\n- penjelasan → berikan penjelasan ringkas dan mudah dipahami.\n\nIngat: Jawab hanya dalam JSON sesuai format yang sudah ditentukan.\n",
+        "options": {
+          "systemMessage": "Kamu adalah guru. Jawab HANYA dalam format JSON valid berikut: \n{\n  \"visual\": \"URL ilustrasi atau diagram yang relevan dengan topik\",\n  \"auditori\": \"URL video (misalnya YouTube) yang menjelaskan topik\",\n  \"kinestetik\": \"Langkah praktik mengenai topik dalam format poin singkat (maksimal 7 langkah, gunakan format 1., 2., 3., ...), Jangan gunakan teks tebal, italic, tanda bintang, atau simbol tambahan, Setiap langkah ditulis di baris baru, dipisahkan dengan newline (\\\\n).\",\n  \"penjelasan\": \"Penjelasan singkat, jelas, dan padat tentang topik\"\n}\n\nAturan:\n- Semua nilai harus berupa string (jangan gunakan array atau object di dalamnya).\n- Jika tidak ada sumber yang sesuai, kembalikan string kosong \"\".\n- Jangan gunakan markdown, blok kode, atau teks tambahan di luar JSON.\n- Gunakan bahasa Indonesia yang mudah dipahami.\n- Jika topik pernah muncul sebelumnya di memori, gunakan jawaban yang sama."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        784,
+        -16
+      ],
+      "id": "3d9f3ce8-12a1-47ca-891b-3b2b6ad9b25b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        752,
+        208
+      ],
+      "id": "1881cddd-0874-47fe-afa7-6f7dbd97abd1",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "dEQXmCcxTeodLNIC",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=sessionId"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        896,
+        208
+      ],
+      "id": "a0a0d079-31aa-4752-ae4a-47c96a7cf105",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "search",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        304,
+        96
+      ],
+      "id": "1569091e-28bb-466b-9c2c-841a40e96ecb",
+      "name": "Webhook",
+      "webhookId": "b4d9b4de-d2c8-4599-bf83-4af17bd1d77b"
+    },
+    {
+      "parameters": {
+        "jsCode": "const topic = $input.first().json.body.topik;\n\nreturn [\n  {\n    visual: `Cari gambar ilustrasi tentang ${topic} di internet.`,\n    auditori: `Cari video pembelajaran tentang ${topic} di YouTube.`,\n    kinestetik: `Buat langkah-langkah praktik untuk memahami topik: ${topic}`\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        528,
+        0
+      ],
+      "id": "d04062bc-bfa8-45c3-bab7-68494de6abb2",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1440,
+        96
+      ],
+      "id": "b92c2e9c-be90-4d63-b1ab-9e56039fcac8",
+      "name": "Respond to Webhook",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Gunakan alat pencarian Google untuk mencari gambar atau video penjelasan {{ $('Webhook').item.json.body.topik }}. Ambil hasil dari internet menggunakan Google Search.",
+        "q": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search_Query__q_', ``, 'string') }}",
+        "additionalFields": {
+          "hl": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-serpapi.serpApiTool",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        208
+      ],
+      "id": "77c69041-09d7-4bd3-834e-fbea8509ecf9",
+      "name": "internet",
+      "credentials": {
+        "serpApi": {
+          "id": "PC7JfIJIelp4hzKt",
+          "name": "SerpApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawOutput = items[0].json.output;\n\n// Hapus pembungkus ```json dan ```\nconst cleaned = rawOutput.replace(/^```json\\n/, '').replace(/\\n```$/, '');\n\n// Parse string JSON menjadi objek\nconst parsed = JSON.parse(cleaned);\n\nreturn [\n  {\n    json: {\n      visual: parsed.visual,\n      auditori: parsed.auditori,\n      kinestetik: parsed.kinestetik,\n      penjelasam: parsed.penjelasan\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1216,
+        96
+      ],
+      "id": "65d38d9d-7bec-4b4a-a56f-15bd0f634bad",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Ambil body dari request\nconst body = $input.first().json.body || {};\nconst topik = body.topik || \"\";\nlet regenerate = body.regenerate || null;\n\n// Validasi nilai regenerate → hanya boleh visual, auditori, kinestetik, penjelasan\nconst allowed = [\"visual\", \"auditori\", \"kinestetik\", \"penjelasan\"];\nif (regenerate && !allowed.includes(regenerate)) {\n  throw new Error(`Invalid regenerate value: ${regenerate}. Harus salah satu dari ${allowed.join(\", \")}`);\n}\n\n// Buat instruksi prompt untuk AI\nlet promptText = \"\";\n\nif (regenerate) {\n  promptText = `Topik: ${topik}.\nHasilkan ulang hanya bagian ${regenerate}.\nBagian lain kosong (\"\").\nJawab HANYA dalam JSON.`;\n} else {\n  promptText = `Topik: ${topik}.\nBuatkan materi belajar lengkap dengan 3 gaya belajar:\n- visual (URL ilustrasi/diagram)\n- auditori (URL video)\n- kinestetik (langkah praktik singkat)\n- penjelasan (ringkas dan jelas)\nJawab HANYA dalam JSON.`;\n}\n\n// Hapus newline agar prompt jadi 1 baris\npromptText = promptText.replace(/\\\\n/g, \" \");\n\n// Kirim ke AI Agent lewat output json\nreturn [\n  {\n    json: {\n      prompt: promptText,\n      topik,\n      regenerate\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        528,
+        528
+      ],
+      "id": "ffae4b3a-1b75-4421-96ea-3b2578edfba0",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topik: {{ $json.topik }}\nHasilkan ulang hanya bagian {{ $json.regenerate }}, pastikan tidak sama seperti yang sebelumnya. Bagian lain kosongkan saja. Jawab hanya dalam format json yang sudah ditentukan",
+        "options": {
+          "systemMessage": "Kamu adalah guru. Jawab HANYA dalam format JSON valid berikut:\n{\n  \"visual\": \"URL ilustrasi atau diagram yang relevan\",\n  \"auditori\": \"URL video yang menjelaskan topik\",\n  \"kinestetik\": \"Langkah praktik singkat dalam format poin 1., 2., 3., dipisahkan newline\",\n  \"penjelasan\": \"Penjelasan singkat, jelas, dan padat\"\n}\n\nAturan:\n- Semua nilai harus berupa string (jangan gunakan array atau object di dalamnya).\n- Jika tidak ada sumber yang sesuai, kembalikan string kosong \"\".\n- Jangan gunakan markdown, blok kode, atau teks tambahan di luar JSON.\n- Gunakan bahasa Indonesia yang mudah dipahami.\n- Jika topik pernah muncul sebelumnya di memori, gunakan jawaban yang sama.\n- Bagian yang dihasilkan ulang harus berbeda dengan yang sebelumnya, cek di memori apa yang dihasilkan sebelum-sebelumnya"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        784,
+        528
+      ],
+      "id": "009b2b6f-3caa-42fa-89af-bee4c0142531",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "regenerate",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        304,
+        528
+      ],
+      "id": "a7bacbf8-9b75-4af3-b14a-6219bd849ff2",
+      "name": "Regenerate",
+      "webhookId": "b4d9b4de-d2c8-4599-bf83-4af17bd1d77b"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        752,
+        752
+      ],
+      "id": "e1c932bc-ce81-4b5a-8bd3-51f9c593f777",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "dEQXmCcxTeodLNIC",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Gunakan alat pencarian Google untuk mencari gambar atau video penjelasan {{ $('Webhook').item.json.body.topik }}. Ambil hasil dari internet menggunakan Google Search.",
+        "q": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search_Query__q_', ``, 'string') }}",
+        "additionalFields": {
+          "hl": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-serpapi.serpApiTool",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        752
+      ],
+      "id": "9ec1be6b-feb7-4fe6-a2e4-e6d735466063",
+      "name": "internet1",
+      "credentials": {
+        "serpApi": {
+          "id": "PC7JfIJIelp4hzKt",
+          "name": "SerpApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1440,
+        528
+      ],
+      "id": "8e5e0fd5-c0c7-47ef-a236-23e922d2377a",
+      "name": "Respond to Webhook1",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawOutput = $input.first().json.output || \"\";\n\n// Bersihkan pembungkus markdown (```json ... ```)\nlet cleaned = rawOutput\n  .replace(/```json/g, '')   // hapus pembuka ```json\n  .replace(/```/g, '')       // hapus penutup ```\n  .trim();                   // hapus spasi/line break berlebih\n\n// Parse ke JSON\nlet parsed;\ntry {\n  parsed = JSON.parse(cleaned);\n} catch (err) {\n  throw new Error(\"Gagal parse JSON dari AI Agent: \" + err.message + \"\\nHasil cleaned: \" + cleaned);\n}\n\nreturn [\n  {\n    json: parsed\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        528
+      ],
+      "id": "b6dd9587-000b-4fd7-bd29-2f7e799959e8",
+      "name": "Code3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "internet": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Regenerate": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "internet1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "85fa197f-de68-41d3-9ce6-f12fc82f4554",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e78b9d0f4fdc91b65e108ef8d72975ab3a2bf299371593cd13931eb976634526"
+  },
+  "nodeGroups": [],
+  "id": "gxmDiIhbZ0hKoFbK",
+  "tags": []
+}

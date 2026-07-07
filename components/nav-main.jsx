@@ -13,7 +13,9 @@ export function NavMain({ items }) {
   return (
     <SidebarMenu className="gap-1 px-2">
       {items.map((item) => {
-        const isActive = pathname === item.url || (item.url !== "/" && pathname.startsWith(item.url))
+        const isActive = item.url === "/siswa" || item.url === "/guru"
+          ? pathname === item.url
+          : pathname === item.url || (item.url !== "/" && pathname.startsWith(item.url))
 
         return (
           <SidebarMenuItem key={item.title}>

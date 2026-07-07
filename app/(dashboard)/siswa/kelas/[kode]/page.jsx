@@ -51,6 +51,7 @@ export default function SiswaKelasPage() {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState("personalized");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -119,6 +120,8 @@ export default function SiswaKelasPage() {
     return m.learningStyle?.toLowerCase() === user.learningStyle.toLowerCase();
   }) || [];
 
+  const displayedMaterials = activeTab === "personalized" ? materiSesuai : (course.materials || []);
+
   const getLearningStyleIcon = (style) => {
     switch (style?.toLowerCase()) {
       case 'auditory':
@@ -164,31 +167,28 @@ export default function SiswaKelasPage() {
         </div>
 
         {/* Header Section */}
-        <div className="mb-8">
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-            <div className="bg-indigo-600 p-8 text-white">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-                <div className="relative">
-                  <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                    <BookOpen className="w-8 h-8 text-white" />
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h1 className="text-3xl sm:text-4xl font-bold mb-2">{course.title}</h1>
-                  <p className="text-white/90 text-lg leading-relaxed">{course.description}</p>
-                  <div className="flex flex-wrap items-center gap-3 mt-4">
-                    <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 hover:bg-white/30 transition-colors">
-                      <Tag className="w-4 h-4 mr-1" />
-                      {course.code}
-                    </Badge>
-                    {user.learningStyle && (
-                      <Badge className={`${getLearningStyleColor(user.learningStyle)} backdrop-blur-sm border-white/30`}>
-                        {getLearningStyleIcon(user.learningStyle)}
-                        <span className="ml-1">{user.learningStyle}</span>
-                      </Badge>
-                    )}
-                  </div>
-                </div>
+        <div className="relative bg-slate-900 text-white rounded-3xl p-8 shadow-xl border border-slate-800 overflow-hidden mb-8">
+          <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#4f46e5_1px,transparent_1px)] [background-size:24px_24px]"></div>
+          <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-6">
+            <div className="relative">
+              <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20">
+                <BookOpen className="w-8 h-8 text-white" />
+              </div>
+            </div>
+            <div className="flex-1">
+              <h1 className="text-3xl sm:text-4xl font-bold mb-2">{course.title}</h1>
+              <p className="text-slate-350 text-base sm:text-lg leading-relaxed">{course.description}</p>
+              <div className="flex flex-wrap items-center gap-3 mt-4">
+                <Badge className="bg-white/10 backdrop-blur-sm text-white border-white/20 hover:bg-white/20 transition-colors">
+                  <Tag className="w-4 h-4 mr-1" />
+                  {course.code}
+                </Badge>
+                {user.learningStyle && (
+                  <Badge className={`${getLearningStyleColor(user.learningStyle)} border-transparent shadow-sm`}>
+                    {getLearningStyleIcon(user.learningStyle)}
+                    <span className="ml-1 font-semibold">{user.learningStyle}</span>
+                  </Badge>
+                )}
               </div>
             </div>
           </div>
@@ -196,19 +196,42 @@ export default function SiswaKelasPage() {
 
         {/* Personalized Learning Section */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <User className="w-5 h-5 text-purple-600" />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 border-b border-slate-200 pb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-indigo-50 rounded-xl border border-indigo-100">
+                <BookOpen className="w-5 h-5 text-indigo-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">Materi Kelas</h2>
+                <p className="text-xs text-slate-500">Materi pembelajaran interaktif untuk Anda</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                Materi yang Dipersonalisasi untuk Anda
-              </h2>
-              <p className="text-sm text-gray-600 mt-1">Konten yang disesuaikan dengan gaya belajar Anda</p>
+            
+            <div className="flex gap-1 bg-slate-100 p-1 rounded-xl w-fit">
+              <button
+                onClick={() => setActiveTab("personalized")}
+                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all duration-200 ${
+                  activeTab === "personalized"
+                    ? "bg-white text-indigo-650 shadow-sm"
+                    : "text-slate-605 hover:text-slate-900"
+                }`}
+              >
+                Rekomendasi
+              </button>
+              <button
+                onClick={() => setActiveTab("all")}
+                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all duration-200 ${
+                  activeTab === "all"
+                    ? "bg-white text-indigo-650 shadow-sm"
+                    : "text-slate-605 hover:text-slate-900"
+                }`}
+              >
+                Semua Materi ({course.materials?.length || 0})
+              </button>
             </div>
           </div>
 
-          {materiSesuai.length === 0 ? (
+          {displayedMaterials.length === 0 ? (
             <Card className="border-2 border-dashed border-gray-200 bg-gray-50/50">
               <CardContent className="flex flex-col items-center justify-center py-16">
                 <div className="relative">
@@ -217,7 +240,11 @@ export default function SiswaKelasPage() {
                   </div>
                 </div>
                 <h3 className="text-lg font-semibold text-gray-700 mb-2">Belum Ada Materi</h3>
-                <p className="text-gray-500 text-center max-w-sm">Belum ada materi yang sesuai dengan gaya belajar Anda saat ini.</p>
+                <p className="text-gray-500 text-center max-w-sm">
+                  {activeTab === "personalized" 
+                    ? "Belum ada materi yang sesuai dengan gaya belajar Anda saat ini." 
+                    : "Belum ada materi yang ditambahkan di kelas ini."}
+                </p>
                 <p className="text-sm text-gray-400 mt-2">Tim kami sedang menyiapkan konten yang lebih relevan untuk Anda.</p>
                 <div className="mt-4 flex gap-2">
                   <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
@@ -228,7 +255,7 @@ export default function SiswaKelasPage() {
             </Card>
           ) : (
             <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
-              {materiSesuai.map((m) => (
+              {displayedMaterials.map((m) => (
                 <Card key={m.id} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 border border-gray-100 hover:border-gray-200">
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between">
@@ -249,7 +276,7 @@ export default function SiswaKelasPage() {
                   </CardHeader>
                   <CardContent className="pt-0">
                     {/* Content based on learning style */}
-                    {user.learningStyle?.toLowerCase() === "auditory" && m.content.match(/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i) ? (
+                    {m.learningStyle?.toLowerCase() === "auditory" && m.content.match(/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i) ? (
                       <div className="space-y-4">
                         <div className="aspect-video w-full rounded-lg overflow-hidden bg-gray-100 shadow-sm">
                           <iframe
@@ -270,7 +297,7 @@ export default function SiswaKelasPage() {
                           Tonton di YouTube
                         </a>
                       </div>
-                    ) : user.learningStyle?.toLowerCase() === "visual" && m.content.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) ? (
+                    ) : m.learningStyle?.toLowerCase() === "visual" && m.content.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) ? (
                       <div className="space-y-4">
                         <div className="relative overflow-hidden rounded-xl flex justify-center items-center bg-gray-50">
                           <img
@@ -313,7 +340,7 @@ export default function SiswaKelasPage() {
                           Lihat Gambar
                         </a>
                       </div>
-                    ) : user.learningStyle?.toLowerCase() === "kinesthetic" ? (
+                    ) : m.learningStyle?.toLowerCase() === "kinesthetic" ? (
                       <div className="space-y-4">
                         <div className="bg-orange-50 border-l-3 border-orange-400 p-3 rounded-lg">
                           <div className="flex items-start">

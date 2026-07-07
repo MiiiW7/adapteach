@@ -107,7 +107,7 @@ export function AppSidebar(props) {
 
       const formatted = data.map((cls) => ({
         name: cls.title,
-        url: `/kelas/${cls.code}`,
+        url: `/siswa/kelas/${cls.code}`,
         instructor: cls.instructor || "Tidak diketahui",
       }))
 
@@ -116,10 +116,10 @@ export function AppSidebar(props) {
       console.error("Gagal mengambil data kelas siswa:", err)
       // Mock data for development if API fails
       setStudentClasses([
-        { name: "Matematika Dasar", url: "/kelas/MAT101", instructor: "Budi Santoso" },
-        { name: "Bahasa Indonesia", url: "/kelas/IND101", instructor: "Siti Nurhaliza" },
-        { name: "IPA", url: "/kelas/IPA101", instructor: "Ahmad Dahlan" },
-        { name: "Bahasa Inggris", url: "/kelas/ENG101", instructor: "Sarah Johnson" },
+        { name: "Matematika Dasar", url: "/siswa/kelas/MAT101", instructor: "Budi Santoso" },
+        { name: "Bahasa Indonesia", url: "/siswa/kelas/IND101", instructor: "Siti Nurhaliza" },
+        { name: "IPA", url: "/siswa/kelas/IPA101", instructor: "Ahmad Dahlan" },
+        { name: "Bahasa Inggris", url: "/siswa/kelas/ENG101", instructor: "Sarah Johnson" },
       ])
     }
   }

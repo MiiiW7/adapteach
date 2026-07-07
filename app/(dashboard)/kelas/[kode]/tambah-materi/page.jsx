@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
+import { ArrowLeft } from "lucide-react"
 
 export default function TambahMateri() {
   // ...
@@ -190,7 +191,18 @@ export default function TambahMateri() {
 
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-8">
+    <div className="max-w-6xl mx-auto p-6 space-y-6">
+      {/* Back Button */}
+      <div className="mb-2">
+        <Link
+          href={`/kelas/${kode}`}
+          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Kembali ke Detail Kelas
+        </Link>
+      </div>
+
       <div className="text-center">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Tambah Materi Baru</h1>
         <p className="text-gray-600">Buat materi pembelajaran dengan gaya visual, auditori, dan kinestetik</p>
@@ -260,7 +272,7 @@ export default function TambahMateri() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Visual Card */}
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow-md border border-purple-200 overflow-hidden">
+            <div className="bg-purple-50 rounded-xl shadow-md border border-purple-200 overflow-hidden">
               <div className="bg-purple-600 text-white p-4">
                 <h3 className="font-bold text-lg flex items-center">
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -340,7 +352,7 @@ export default function TambahMateri() {
             </div>
 
             {/* Auditori Card */}
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-md border border-blue-200 overflow-hidden">
+            <div className="bg-blue-50 rounded-xl shadow-md border border-blue-200 overflow-hidden">
               <div className="bg-blue-600 text-white p-4">
                 <h3 className="font-bold text-lg flex items-center">
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -390,7 +402,7 @@ export default function TambahMateri() {
             </div>
 
             {/* Kinestetik Card */}
-            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl shadow-md border border-green-200 overflow-hidden">
+            <div className="bg-green-50 rounded-xl shadow-md border border-green-200 overflow-hidden">
               <div className="bg-green-600 text-white p-4">
                 <h3 className="font-bold text-lg flex items-center">
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
